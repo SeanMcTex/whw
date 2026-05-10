@@ -118,6 +118,14 @@
   .picker-btn { background: white; border: 2px solid var(--border); border-radius: 10px; padding: 0.85rem 0.5rem; font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 500; cursor: pointer; color: var(--text); transition: all 0.15s; }
   .picker-btn:hover, .picker-btn:active { border-color: var(--highland); background: var(--mist); color: var(--highland); }
 
+  /* Notes */
+  .notes-area { padding: 0.5rem 1rem 0.75rem; border-top: 1px solid var(--border); }
+  .notes-label { font-size: 0.68rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
+  .day-notes { width: 100%; min-height: 56px; border: 1px solid var(--border); border-radius: 6px; padding: 0.45rem 0.6rem; font-family: 'DM Sans', sans-serif; font-size: 0.8rem; color: var(--text); resize: vertical; background: var(--mist); line-height: 1.5; }
+  .day-notes:focus { outline: none; border-color: var(--loch); background: white; }
+  .day-notes:disabled { opacity: 0.55; cursor: not-allowed; }
+  .notes-meta { font-size: 0.67rem; color: var(--text-muted); margin-top: 3px; min-height: 1em; }
+
   @keyframes blink { 0%,100% { opacity: 0.35; } 50% { opacity: 1; } }
 
   @media (max-width: 480px) {
@@ -161,6 +169,7 @@
   <div class="stat"><div class="stat-val">7</div><div class="stat-lbl">hiking days</div></div>
   <div class="stat"><div class="stat-val">4 Oct</div><div class="stat-lbl">start</div></div>
   <div class="stat"><div class="stat-val">11 Oct</div><div class="stat-lbl">finish</div></div>
+  <div class="stat"><div class="stat-val" id="countdown-val">—</div><div class="stat-lbl">days to go</div></div>
 </div>
 
 <div class="tabs">
@@ -490,6 +499,7 @@ async function selectHiker(name) {
   document.getElementById('picker-overlay').style.display = 'none';
   document.getElementById('hiker-bar').style.display      = 'flex';
   document.getElementById('hiker-name-display').textContent = name;
+  document.querySelectorAll('.day-notes').forEach(ta => ta.disabled = false);
   await loadAllStates();
   subscribeToChanges();
   renderChecklist();
@@ -498,6 +508,7 @@ async function selectHiker(name) {
 function changeHiker() {
   localStorage.removeItem(HIKER_KEY);
   currentHiker = null;
+  document.querySelectorAll('.day-notes').forEach(ta => ta.disabled = true);
   document.getElementById('hiker-bar').style.display    = 'none';
   document.getElementById('picker-overlay').style.display = 'flex';
 }
@@ -540,6 +551,84 @@ function setSyncDot(s) {
   if (!dot) return;
   dot.className = 'sync-dot' + (s === 'syncing' ? ' syncing' : s === 'err' ? ' err' : '');
   dot.title = s === 'ok' ? 'Synced' : s === 'syncing' ? 'Syncing…' : 'Sync error — check connection';
+}
+
+// ── Notes ─────────────────────────────────────────────────────────────────────
+let notesData  = {};
+let noteTimers = {};
+
+async function loadNotes() {
+  try {
+    const { data, error } = await sb.from('day_notes').select('day_idx, content, updated_by, updated_at');
+    if (error) throw error;
+    notesData = {};
+    (data || []).forEach(r => { notesData[r.day_idx] = r; });
+    renderNotes();
+  } catch (e) { console.warn('Notes load failed:', e); }
+}
+
+function renderNotes() {
+  document.querySelectorAll('.day-notes').forEach(ta => {
+    const i = +ta.dataset.day;
+    const n = notesData[i];
+    if (document.activeElement !== ta) ta.value = n?.content || '';
+    const meta = document.getElementById(`note-meta-${i}`);
+    if (meta) meta.textContent = n?.updated_by ? `Last edited by ${n.updated_by}` : '';
+  });
+}
+
+function subscribeToNoteChanges() {
+  sb.channel('whw-notes')
+    .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'day_notes' },
+        payload => {
+          notesData[payload.new.day_idx] = payload.new;
+          renderNotes();
+        })
+    .subscribe();
+}
+
+function onNoteInput(i) {
+  if (!currentHiker) return;
+  clearTimeout(noteTimers[i]);
+  noteTimers[i] = setTimeout(() => saveNote(i), 1500);
+}
+
+async function saveNote(i) {
+  const ta = document.getElementById(`note-${i}`);
+  if (!ta || !currentHiker) return;
+  const content = ta.value;
+  notesData[i] = { day_idx: i, content, updated_by: currentHiker };
+  setSyncDot('syncing');
+  const { error } = await sb.from('day_notes')
+    .upsert({ day_idx: i, content, updated_by: currentHiker, updated_at: new Date().toISOString() });
+  setSyncDot(error ? 'err' : 'ok');
+  const meta = document.getElementById(`note-meta-${i}`);
+  if (meta && !error) meta.textContent = `Last edited by ${currentHiker}`;
+}
+
+function injectNoteAreas() {
+  document.querySelectorAll('.day-card').forEach((card, i) => {
+    const body = card.querySelector('.day-body');
+    if (!body) return;
+    const div = document.createElement('div');
+    div.className = 'notes-area';
+    div.innerHTML =
+      `<div class="notes-label">Group notes</div>` +
+      `<textarea id="note-${i}" class="day-notes" data-day="${i}" placeholder="Restaurant recs, trail notes, reminders…" disabled></textarea>` +
+      `<div class="notes-meta" id="note-meta-${i}"></div>`;
+    div.querySelector('textarea').addEventListener('input', () => onNoteInput(i));
+    body.appendChild(div);
+  });
+}
+
+// ── Countdown ─────────────────────────────────────────────────────────────────
+function initCountdown() {
+  const start = new Date('2026-10-04T00:00:00');
+  const today = new Date(); today.setHours(0,0,0,0);
+  const days  = Math.ceil((start - today) / 86400000);
+  const el    = document.getElementById('countdown-val');
+  if (el) el.textContent = days > 0 ? days : '🏔️';
 }
 
 // ── Checklist helpers ─────────────────────────────────────────────────────────
@@ -709,6 +798,10 @@ const PHASES = [
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 (async function init() {
+  injectNoteAreas();
+  initCountdown();
+  await loadNotes();
+  subscribeToNoteChanges();
   const stored = localStorage.getItem(HIKER_KEY);
   if (stored && NAMES.includes(stored)) {
     await selectHiker(stored);
