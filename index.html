@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WHW 2026 — Sharky, R2, Mango & Madness</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root {
+    --highland: #2C4A3E;
+    --highland-light: #3D6B5C;
+    --loch: #4A7C8A;
+    --mist: #E8EDE8;
+    --gold: #C4943A;
+    --cream: #F7F4EF;
+    --text: #1A1A1A;
+    --text-muted: #6B6B6B;
+    --warn-bg: #FDF3E3;
+    --warn-border: #C4943A;
+    --border: #D5D9D0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
+
+  /* Header */
+  .header { background: var(--highland); color: white; padding: 2rem 1.5rem 1.5rem; position: relative; overflow: hidden; }
+  .header::before { content: ''; position: absolute; top: -40px; right: -40px; width: 200px; height: 200px; border-radius: 50%; background: rgba(255,255,255,0.04); }
+  .header-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+  .header h1 { font-family: 'Playfair Display', serif; font-size: clamp(1.4rem, 5vw, 2rem); font-weight: 600; line-height: 1.2; }
+  .header-sub { font-size: 0.8rem; opacity: 0.7; margin-top: 0.3rem; letter-spacing: 0.05em; }
+  .booking-badge { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 0.5rem 0.75rem; font-size: 0.72rem; text-align: right; white-space: nowrap; }
+  .booking-badge strong { display: block; font-size: 0.85rem; letter-spacing: 0.03em; }
+
+  /* Stats bar */
+  .stats-bar { display: flex; background: var(--highland-light); color: white; }
+  .stat { flex: 1; text-align: center; padding: 0.75rem 0.5rem; border-right: 1px solid rgba(255,255,255,0.15); }
+  .stat:last-child { border-right: none; }
+  .stat-val { font-size: 1.3rem; font-weight: 500; line-height: 1; }
+  .stat-lbl { font-size: 0.65rem; opacity: 0.7; margin-top: 2px; letter-spacing: 0.04em; text-transform: uppercase; }
+
+  /* Tabs */
+  .tabs { display: flex; background: white; border-bottom: 2px solid var(--border); overflow-x: auto; }
+  .tab { flex: 1; min-width: 70px; padding: 0.8rem 0.5rem; background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 0.8rem; font-weight: 500; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.15s; white-space: nowrap; }
+  .tab.active { color: var(--highland); border-bottom-color: var(--highland); }
+  .tab:hover:not(.active) { color: var(--text); background: var(--mist); }
+
+  /* Hiker bar */
+  .hiker-bar { background: var(--mist); border-bottom: 1px solid var(--border); padding: 0.45rem 1rem; display: flex; align-items: center; justify-content: center; gap: 0.4rem; font-size: 0.78rem; color: var(--text-muted); }
+  .hiker-bar strong { color: var(--highland); }
+  .hiker-change-btn { background: none; border: none; cursor: pointer; color: var(--loch); font-size: 0.72rem; text-decoration: underline; padding: 0; font-family: 'DM Sans', sans-serif; }
+  .sync-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #6BBF8A; vertical-align: middle; margin-left: 1px; flex-shrink: 0; }
+  .sync-dot.syncing { background: var(--gold); animation: blink 1s ease-in-out infinite; }
+  .sync-dot.err { background: #C04040; }
+
+  /* Content */
+  .content { max-width: 680px; margin: 0 auto; padding: 1rem; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* Day cards */
+  .day-card { background: white; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 0.75rem; overflow: hidden; }
+  .day-header { background: var(--highland); color: white; padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap; }
+  .day-badge { font-size: 0.7rem; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
+  .day-title { font-family: 'Playfair Display', serif; font-size: 1rem; }
+  .day-miles { font-size: 0.75rem; opacity: 0.8; white-space: nowrap; }
+  .day-body { padding: 0.85rem 1rem; }
+  .detail-row { display: flex; gap: 0.5rem; padding: 4px 0; font-size: 0.82rem; align-items: baseline; }
+  .detail-label { color: var(--text-muted); min-width: 90px; flex-shrink: 0; }
+  .detail-val { color: var(--text); }
+  .alert-box { background: var(--warn-bg); border-left: 3px solid var(--warn-border); border-radius: 0 6px 6px 0; padding: 0.6rem 0.75rem; margin-top: 0.6rem; font-size: 0.8rem; color: #7A5A20; line-height: 1.5; }
+  .alert-box strong { color: #5A3F0F; }
+  .success-card { background: #EBF5F0; border: 1px solid #B5D9C8; border-radius: 12px; padding: 1.25rem; text-align: center; font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--highland); margin-bottom: 0.75rem; }
+
+  /* Checklist */
+  .section-label { font-size: 0.68rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin: 1.25rem 0 0.5rem; }
+  .section-label:first-child { margin-top: 0; }
+  .phase-block { background: white; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 0.75rem; overflow: hidden; }
+  .phase-header { background: var(--mist); padding: 0.6rem 1rem; font-size: 0.78rem; font-weight: 500; color: var(--highland); border-bottom: 1px solid var(--border); }
+  .col-row { display: grid; grid-template-columns: 1fr 60px 60px 60px 60px; padding: 0.35rem 1rem; background: #F9FAFA; border-bottom: 1px solid var(--border); }
+  .col-name { text-align: center; font-size: 0.7rem; font-weight: 500; color: var(--text-muted); }
+  .col-name:first-child { text-align: left; }
+  .col-name.mine { color: var(--highland); }
+  .task-row { display: grid; grid-template-columns: 1fr 60px 60px 60px 60px; padding: 0.45rem 1rem; border-bottom: 1px solid var(--border); align-items: center; }
+  .task-row:last-child { border-bottom: none; }
+  .task-text { font-size: 0.8rem; color: var(--text); padding-right: 0.5rem; line-height: 1.4; }
+  .check-btn { text-align: center; font-size: 1rem; padding: 4px; border-radius: 6px; user-select: none; -webkit-tap-highlight-color: transparent; }
+  .check-btn.mine { cursor: pointer; transition: background 0.1s; }
+  .check-btn.mine:hover { background: var(--mist); }
+  .check-btn.theirs { cursor: default; opacity: 0.5; }
+  .check-btn.done { color: #2C7A50; }
+  .check-btn.skip { color: #B85050; }
+  .check-btn.empty { color: #CCC; }
+  .checklist-hint { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.5; background: white; border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 0.8rem; }
+  .cl-msg { text-align: center; padding: 2.5rem 1rem; color: var(--text-muted); font-size: 0.85rem; }
+
+  /* Tips */
+  .tip-card { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 0.85rem 1rem; margin-bottom: 0.6rem; }
+  .tip-label { font-size: 0.68rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--loch); margin-bottom: 4px; }
+  .tip-text { font-size: 0.82rem; color: var(--text); line-height: 1.6; }
+
+  /* Logistics */
+  .info-card { background: white; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 0.75rem; }
+  .info-card-title { background: var(--mist); padding: 0.5rem 1rem; font-size: 0.75rem; font-weight: 500; color: var(--highland); border-bottom: 1px solid var(--border); }
+  .info-row { display: flex; justify-content: space-between; align-items: baseline; padding: 0.45rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.8rem; gap: 1rem; }
+  .info-row:last-child { border-bottom: none; }
+  .info-key { color: var(--text-muted); flex-shrink: 0; }
+  .info-val { color: var(--text); text-align: right; font-weight: 500; }
+  .info-val.warn { color: var(--gold); }
+  .info-val.phone { font-family: monospace; font-size: 0.78rem; }
+
+  /* Picker modal */
+  .picker-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 1rem; }
+  .picker-modal { background: var(--cream); border-radius: 16px; padding: 2rem 1.5rem; max-width: 340px; width: 100%; text-align: center; }
+  .picker-modal h2 { font-family: 'Playfair Display', serif; font-size: 1.35rem; color: var(--highland); margin-bottom: 0.5rem; }
+  .picker-modal p { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.5; }
+  .picker-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+  .picker-btn { background: white; border: 2px solid var(--border); border-radius: 10px; padding: 0.85rem 0.5rem; font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 500; cursor: pointer; color: var(--text); transition: all 0.15s; }
+  .picker-btn:hover, .picker-btn:active { border-color: var(--highland); background: var(--mist); color: var(--highland); }
+
+  @keyframes blink { 0%,100% { opacity: 0.35; } 50% { opacity: 1; } }
+
+  @media (max-width: 480px) {
+    .col-row, .task-row { grid-template-columns: 1fr 50px 50px 50px 50px; }
+    .col-row { padding: 0.35rem 0.75rem; }
+    .task-row { padding: 0.45rem 0.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Picker overlay — shown until hiker is chosen -->
+<div class="picker-overlay" id="picker-overlay">
+  <div class="picker-modal">
+    <h2>Who are you?</h2>
+    <p>Your checklist syncs with the group — everyone sees each other's progress in real time.</p>
+    <div class="picker-grid">
+      <button class="picker-btn" onclick="selectHiker('Sharky')">Sharky</button>
+      <button class="picker-btn" onclick="selectHiker('R2')">R2</button>
+      <button class="picker-btn" onclick="selectHiker('Mango')">Mango</button>
+      <button class="picker-btn" onclick="selectHiker('Madness')">Madness</button>
+    </div>
+  </div>
+</div>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <h1>West Highland Way</h1>
+      <div class="header-sub">SHARKY · R2 · MANGO · MADNESS &nbsp;·&nbsp; OCTOBER 2026</div>
+    </div>
+    <div class="booking-badge">
+      <strong>BOK00109962</strong>
+      Mac's Adventure
+    </div>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat"><div class="stat-val">96</div><div class="stat-lbl">miles</div></div>
+  <div class="stat"><div class="stat-val">7</div><div class="stat-lbl">hiking days</div></div>
+  <div class="stat"><div class="stat-val">4 Oct</div><div class="stat-lbl">start</div></div>
+  <div class="stat"><div class="stat-val">11 Oct</div><div class="stat-lbl">finish</div></div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('itinerary',this)">Itinerary</button>
+  <button class="tab" onclick="switchTab('checklist',this)">Checklist</button>
+  <button class="tab" onclick="switchTab('tips',this)">Tips & Boots</button>
+  <button class="tab" onclick="switchTab('logistics',this)">Logistics</button>
+</div>
+
+<div class="hiker-bar" id="hiker-bar" style="display:none">
+  Tracking as <strong id="hiker-name-display"></strong>
+  <span class="sync-dot" id="sync-dot" title="Synced"></span>
+  &nbsp;·&nbsp;
+  <button class="hiker-change-btn" onclick="changeHiker()">change</button>
+</div>
+
+<div class="content">
+
+  <!-- ITINERARY -->
+  <div id="itinerary" class="panel active">
+
+    <div class="day-card">
+      <div class="day-header">
+        <span class="day-badge">Day 1 · 4 Oct</span>
+        <span class="day-title">Milngavie → Drymen</span>
+        <span class="day-miles">12 mi / 19.5 km</span>
+      </div>
+      <div class="day-body">
+        <div class="detail-row"><span class="detail-label">Stay</span><span class="detail-val">Ashbank B&amp;B, 1 Balmaha Road, Drymen G63 0BX</span></div>
+        <div class="detail-row"><span class="detail-label">Check in</span><span class="detail-val">4–6pm (Tommy may check in earlier if present)</span></div>
+        <div class="detail-row"><span class="detail-label">Check out</span><span class="detail-val">7–10am</span></div>
+        <div class="detail-row"><span class="detail-label">Baggage</span><span class="detail-val">Meet AMS at Milngavie Rail Station, 8:30–9:00am</span></div>
+        <div class="detail-row"><span class="detail-label">Packed lunch</span><span class="detail-val">Advise on arrival (payable on site)</span></div>
+        <div class="alert-box"><strong>Bags out by 8:30am sharp.</strong> The driver will not wait — a busy schedule and many stops. Label your bag clearly with the luggage tag provided.</div>
+      </div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-header">
+        <span class="day-badge">Day 2 · 5 Oct</span>
+        <span class="day-title">Drymen → Rowardennan</span>
+        <span class="day-miles">14.5 mi / 23.5 km</span>
+      </div>
+      <div class="day-body">
+        <div class="detail-row"><span class="detail-label">Stay</span><span class="detail-val">Rowardennan Hotel, G63 0AR</span></div>
+        <div class="detail-row"><span class="detail-label">Check in</span><span class="detail-val">3–10pm (after 7pm: check in at the bar)</span></div>
+        <div class="detail-row"><span class="detail-label">Check out</span><span class="detail-val">By 10am</span></div>
+        <div class="detail-row"><span class="detail-label">Dinner</span><span class="detail-val">Book online or call ahead; shop on site for snacks &amp; sandwiches</span></div>
+        <div class="detail-row"><span class="detail-label">Baggage pickup</span><span class="detail-val">Drymen accommodation, 9:00am</span></div>
+      </div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-header">
+        <span class="day-badge">Day 3 · 6 Oct</span>
+        <span class="day-title">Rowardennan → Inverarnan</span>
+        <span class="day-miles">14.5 mi / 23 km</span>
+      </div>
+      <div class="day-body">
+        <div class="detail-row"><span class="detail-label">Stay</span><span class="detail-val">Ardlui Hotel, North Loch Lomond, G83 7EB</span></div>
+        <div class="detail-row"><span class="detail-label">Check in</span><span class="detail-val">3–6pm</span></div>
+        <div class="detail-row"><span class="detail-label">Dinner</span><span class="detail-val">Call ahead; order packed lunch night before</span></div>
+        <div class="detail-row"><span class="detail-label">Baggage pickup</span><span class="detail-val">Rowardennan accommodation, 9:00am</span></div>
+        <div class="alert-box">
+          <strong>Ferry required!</strong> At Ardleish, turn left to the jetty and raise the ball to summon the ferry.<br>
+          Oct departures from Ardlui: 09:00–13:00, 15:00–18:00 (no 19:00 sailing in October).<br>
+          From Ardleish: 10 past each hour. Cash or card accepted.
+        </div>
+      </div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-header">
+        <span class="day-badge">Day 4 · 7 Oct</span>
+        <span class="day-title">Inverarnan → Tyndrum</span>
+        <span class="day-miles">12 mi / 19 km</span>
+      </div>
+      <div class="day-body">
+        <div class="detail-row"><span class="detail-label">Stay</span><span class="detail-val">Glengarry House, Tyndrum, FK20 8RY</span></div>
+        <div class="detail-row"><span class="detail-label">Check in</span><span class="detail-val">3–6pm strictly (call if arriving before 3pm)</span></div>
+        <div class="detail-row"><span class="detail-label">Dinner</span><span class="detail-val">Tyndrum village; torches available for walking to pub after dark</span></div>
+        <div class="detail-row"><span class="detail-label">Baggage pickup</span><span class="detail-val">Inverarnan accommodation, 9:00am</span></div>
+        <div class="alert-box"><strong>Do not take the A82 to the accommodation</strong> — busy road with blind bends. Follow the WHW route until you see Glengarry House signage, then turn right over a small bridge to the back of the house.</div>
+      </div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-header">
+        <span class="day-badge">Day 5 · 8 Oct</span>
+        <span class="day-title">Tyndrum → Glencoe (shuttle)</span>
+        <span class="day-miles">18.5 mi / 29.5 km</span>
+      </div>
+      <div class="day-body">
+        <div class="detail-row"><span class="detail-label">Stay</span><span class="detail-val">Isles of Glencoe Hotel, Ballachulish, PH49 4HL</span></div>
+        <div class="detail-row"><span class="detail-label">Check in</span><span class="detail-val">3pm</span></div>
+        <div class="detail-row"><span class="detail-label">Dinner</span><span class="detail-val">Call ahead to reserve; restaurant or conservatory dining</span></div>
+        <div class="detail-row"><span class="detail-label">Baggage</span><span class="detail-val">Tyndrum → Kingshouse (transfer), 9:00am pickup</span></div>
+        <div class="detail-row"><span class="detail-label">Shuttle pickup</span><span class="detail-val">Glencoe Ski Centre Café, 15:00–17:30 (every 35 min)</span></div>
+        <div class="alert-box">
+          <strong>⚠ Shuttle status: To Be Confirmed</strong> — chase Mac's before you go.<br>
+          At Black Rock Cottage, divert from WHW to Glencoe Ski Centre Café for the shuttle. Your names are on the driver's list.<br>
+          If you won't make 17:30: call driver +44 7436 410640 or Mac's office.
+        </div>
+      </div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-header">
+        <span class="day-badge">Day 6 · 9 Oct</span>
+        <span class="day-title">Kingshouse → Kinlochleven</span>
+        <span class="day-miles">9 mi / 14.5 km</span>
+      </div>
+      <div class="day-body">
+        <div class="detail-row"><span class="detail-label">Stay</span><span class="detail-val">Tigh na Cheo, Garbhein Rd, Kinlochleven, PH50 4SE</span></div>
+        <div class="detail-row"><span class="detail-label">Check in</span><span class="detail-val">2–6pm</span></div>
+        <div class="detail-row"><span class="detail-label">Breakfast</span><span class="detail-val">7:30–8:30am (time slot allocated on arrival)</span></div>
+        <div class="detail-row"><span class="detail-label">Morning shuttle</span><span class="detail-val">Ballachulish → Glencoe Ski Resort, 9:00–10:30am pickup (driver confirms exact time)</span></div>
+        <div class="detail-row"><span class="detail-label">Baggage pickup</span><span class="detail-val">Ballachulish accommodation, 9:00am</span></div>
+        <div class="alert-box"><strong>Devil's Staircase day</strong> — highest point on the WHW (548m). Shorter miles but steep. Start well-fed. Allow extra time for the climb.</div>
+      </div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-header">
+        <span class="day-badge">Day 7 · 10 Oct</span>
+        <span class="day-title">Kinlochleven → Fort William</span>
+        <span class="day-miles">15 mi / 24 km</span>
+      </div>
+      <div class="day-body">
+        <div class="detail-row"><span class="detail-label">Stay</span><span class="detail-val">Myrtle Bank Guest House, 8 Achintore Rd, Fort William, PH33 6RQ</span></div>
+        <div class="detail-row"><span class="detail-label">Check in</span><span class="detail-val">2–6pm (call Dora if running late)</span></div>
+        <div class="detail-row"><span class="detail-label">Dinner</span><span class="detail-val">Book 2+ days in advance — Fort William restaurants fill up</span></div>
+        <div class="detail-row"><span class="detail-label">Baggage pickup</span><span class="detail-val">Kinlochleven accommodation, 9:00am</span></div>
+        <div class="alert-box">Last day! Book Fort William dinner from the trail on Day 5 or 6 — you won't want to scramble for it at the end. Steep climb out of Kinlochleven at the start, then a glorious finish.</div>
+      </div>
+    </div>
+
+    <div class="success-card">
+      Day 8 · 11 Oct — Onward from Fort William<br>
+      <span style="font-size:0.85rem;font-family:'DM Sans',sans-serif;color:#4A7C8A;font-weight:300">Check out · Celebrate · Head home heroes</span>
+    </div>
+
+  </div><!-- /itinerary -->
+
+  <!-- CHECKLIST -->
+  <div id="checklist" class="panel">
+    <div class="checklist-hint">Tap your column to cycle: <strong>✓</strong> done → <strong>✗</strong> skip → clear. All four hikers' progress is visible to everyone.</div>
+    <div id="cl-root"></div>
+  </div>
+
+  <!-- TIPS -->
+  <div id="tips" class="panel">
+
+    <div class="section-label">Boots — when to buy &amp; break in</div>
+    <div class="tip-card">
+      <div class="tip-label">The sweet spot</div>
+      <div class="tip-text">Buy now (5 months out) — ideal timing. 8–12 weeks of active use is the break-in target. Wear them on every training walk from day one; don't save them. By 4–6 weeks out they should feel like old friends. If they still don't fit well at that point, you still have time to switch.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">Don't worry about wearing them out</div>
+      <div class="tip-text">Quality hiking boots last 500–1,000 miles. Your break-in adds maybe 50–100 miles — a rounding error on their lifespan. The real danger is buying too close to departure, not getting enough wear on them, and destroying your feet on Day 1.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">What to look for</div>
+      <div class="tip-text">Waterproof (Gore-Tex or equivalent, not just water-resistant — the distinction matters enormously in October Highland bog). Ankle support. A genuine hiking boot, not a trail runner. Pair with merino wool socks; use the same socks during break-in as you'll wear on the trail.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">October conditions</div>
+      <div class="tip-text">Rain and mud are near-certain. Rannoch Moor on Day 5 is a legitimate bog. Waterproofness is not optional — if your boots get wet inside, you'll have blisters within hours. Gaiters help too.</div>
+    </div>
+
+    <div class="section-label">Training</div>
+    <div class="tip-card">
+      <div class="tip-label">The real challenge</div>
+      <div class="tip-text">Not any single day — it's the cumulative multi-day fatigue. Training with back-to-back long walks on weekends is the single most useful thing you can do. Your legs on Day 5 will feel very different from your legs on Day 1.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">Mileage targets</div>
+      <div class="tip-text"><strong>Now–June:</strong> 5–8 miles, 3x/week. <strong>July:</strong> 10–12 miles long day. <strong>August:</strong> 15–18 miles long day + 2–3 day back-to-back hike. Your hardest day on the itinerary is 18.5 miles (Day 5) — you want to have exceeded that in training before you leave.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">San Antonio is flat — address that</div>
+      <div class="tip-text">The WHW has ~3,500m total elevation gain. Actively seek out hills in training, or supplement with squats, lunges, calf raises, and step-ups. The climbs (Conic Hill, Devil's Staircase, Mamore Ridge) will bite if your legs aren't prepared for ascent and descent.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">Train in bad weather</div>
+      <div class="tip-text">Don't skip rainy days. You need to know your gear works, and you need to be mentally comfortable walking in driving Scottish rain. Get comfortable with discomfort before Scotland.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">Taper</div>
+      <div class="tip-text">2–3 weeks before departure, reduce big mileage. Arrive rested, not worn out. A final 12–15 mile confidence walk in mid-September, then coast in.</div>
+    </div>
+
+    <div class="section-label">On-trail tips</div>
+    <div class="tip-card">
+      <div class="tip-label">Bags out by 8:30am every day</div>
+      <div class="tip-text">Non-negotiable. Ask each accommodation the night before where bags should be left. Label clearly — many bags are being moved each day.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">Day 3 ferry — raise the ball!</div>
+      <div class="tip-text">At Ardleish jetty you must physically raise the signal ball to summon the ferry. Last October sailing is 18:00 from Ardlui. Don't dawdle on the Loch Lomond section that day.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">Fort William dinner — book early</div>
+      <div class="tip-text">Restaurants need 2+ days notice. Book from the trail on Day 5 or 6 while you still have the wherewithal to think about it.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">Glencoe shuttle — chase confirmation</div>
+      <div class="tip-text">Your booking doc marks Days 5 &amp; 6 shuttle as "To Be Confirmed." Follow up with Mac's well before departure.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">Offline maps are essential</div>
+      <div class="tip-text">Download the Mac's Adventure app with offline maps before you leave. Mobile signal in the Highlands is patchy and unreliable. Don't rely on data for navigation mid-trail.</div>
+    </div>
+
+  </div><!-- /tips -->
+
+  <!-- LOGISTICS -->
+  <div id="logistics" class="panel">
+
+    <div class="section-label">Booking</div>
+    <div class="info-card">
+      <div class="info-row"><span class="info-key">Booking reference</span><span class="info-val">BOK00109962</span></div>
+      <div class="info-row"><span class="info-key">Dates</span><span class="info-val">4–11 October 2026</span></div>
+      <div class="info-row"><span class="info-key">Mac's US</span><span class="info-val phone">+1 (720) 487-9898</span></div>
+      <div class="info-row"><span class="info-key">Mac's UK</span><span class="info-val phone">+44 141 530 8886</span></div>
+      <div class="info-row"><span class="info-key">Mac's email</span><span class="info-val">operations@macsadventure.com</span></div>
+    </div>
+
+    <div class="section-label">Baggage transfer (AMS)</div>
+    <div class="info-card">
+      <div class="info-row"><span class="info-key">Phone</span><span class="info-val phone">+44 1360 312 840</span></div>
+      <div class="info-row"><span class="info-key">Confirmation</span><span class="info-val">8256, 8257</span></div>
+      <div class="info-row"><span class="info-key">Per person limit</span><span class="info-val">1 bag, max 20 kg</span></div>
+      <div class="info-row"><span class="info-key">Daily pickup</span><span class="info-val">By 8:30am (no exceptions)</span></div>
+      <div class="info-row"><span class="info-key">Daily delivery</span><span class="info-val">By 5:00pm</span></div>
+      <div class="info-row"><span class="info-key">Day 1 pickup</span><span class="info-val">Milngavie Rail Station, 8:30–9:00am</span></div>
+    </div>
+
+    <div class="section-label">Glencoe shuttle (Days 5 &amp; 6)</div>
+    <div class="info-card">
+      <div class="info-row"><span class="info-key">Service</span><span class="info-val">Mac's / AbenteuerWege</span></div>
+      <div class="info-row"><span class="info-key">Office phone</span><span class="info-val phone">+44 1877 384 768</span></div>
+      <div class="info-row"><span class="info-key">Driver (emergency)</span><span class="info-val phone">+44 7436 410640</span></div>
+      <div class="info-row"><span class="info-key">Status</span><span class="info-val warn">⚠ To Be Confirmed</span></div>
+      <div class="info-row"><span class="info-key">Day 5 pickup</span><span class="info-val">Glencoe Ski Centre, 15:00–17:30</span></div>
+      <div class="info-row"><span class="info-key">Day 6 pickup</span><span class="info-val">Ballachulish accommodation, 9:00–10:30am</span></div>
+    </div>
+
+    <div class="section-label">Ardlui ferry (Day 3)</div>
+    <div class="info-card">
+      <div class="info-row"><span class="info-key">Season</span><span class="info-val">1 Apr – 31 Oct</span></div>
+      <div class="info-row"><span class="info-key">From Ardlui (Oct)</span><span class="info-val">09–13:00, 15–18:00 (no 19:00)</span></div>
+      <div class="info-row"><span class="info-key">From Ardleish</span><span class="info-val">10 past each hour</span></div>
+      <div class="info-row"><span class="info-key">Payment</span><span class="info-val">Cash or card</span></div>
+      <div class="info-row"><span class="info-key">Important</span><span class="info-val">Raise the ball at Ardleish jetty</span></div>
+    </div>
+
+    <div class="section-label">Accommodations</div>
+    <div class="info-card">
+      <div class="info-row"><span class="info-key">Night 1 · Drymen</span><span class="info-val">Ashbank B&amp;B</span></div>
+      <div class="info-row"><span class="info-key">Night 2 · Rowardennan</span><span class="info-val">Rowardennan Hotel</span></div>
+      <div class="info-row"><span class="info-key">Night 3 · Inverarnan</span><span class="info-val">Ardlui Hotel</span></div>
+      <div class="info-row"><span class="info-key">Night 4 · Tyndrum</span><span class="info-val">Glengarry House</span></div>
+      <div class="info-row"><span class="info-key">Night 5 · Ballachulish</span><span class="info-val">Isles of Glencoe Hotel</span></div>
+      <div class="info-row"><span class="info-key">Night 6 · Kinlochleven</span><span class="info-val">Tigh na Cheo</span></div>
+      <div class="info-row"><span class="info-key">Night 7 · Fort William</span><span class="info-val">Myrtle Bank Guest House</span></div>
+    </div>
+
+  </div><!-- /logistics -->
+
+</div><!-- /content -->
+
+<script>
+// ── Supabase config ── REPLACE BOTH VALUES BEFORE DEPLOYING ──────────────────
+const SUPABASE_URL      = 'https://qghfnmsoarntmmclomfd.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_QxgqVIaT7jcOTX33MKt3Vg_b8Il-kqK';
+// ────────────────────────────────────────────────────────────────────────────
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const NAMES = ['Sharky', 'R2', 'Mango', 'Madness'];
+const HIKER_KEY = 'whw_hiker';
+
+// State: allStates[hikerName][phaseIdx][taskIdx] = 0|1|2
+let currentHiker = null;
+let allStates    = {};
+
+// ── Hiker picker ──────────────────────────────────────────────────────────────
+async function selectHiker(name) {
+  currentHiker = name;
+  localStorage.setItem(HIKER_KEY, name);
+  document.getElementById('picker-overlay').style.display = 'none';
+  document.getElementById('hiker-bar').style.display      = 'flex';
+  document.getElementById('hiker-name-display').textContent = name;
+  await loadAllStates();
+  subscribeToChanges();
+  if (document.getElementById('checklist').classList.contains('active')) renderChecklist();
+}
+
+function changeHiker() {
+  localStorage.removeItem(HIKER_KEY);
+  currentHiker = null;
+  document.getElementById('hiker-bar').style.display    = 'none';
+  document.getElementById('picker-overlay').style.display = 'flex';
+}
+
+// ── Supabase I/O ──────────────────────────────────────────────────────────────
+async function loadAllStates() {
+  setSyncDot('syncing');
+  try {
+    const { data, error } = await sb.from('checklist_state').select('hiker, phase_idx, task_idx, state');
+    if (error) throw error;
+    allStates = {};
+    (data || []).forEach(r => {
+      if (!allStates[r.hiker])              allStates[r.hiker]              = {};
+      if (!allStates[r.hiker][r.phase_idx]) allStates[r.hiker][r.phase_idx] = {};
+      allStates[r.hiker][r.phase_idx][r.task_idx] = r.state;
+    });
+    setSyncDot('ok');
+  } catch (e) {
+    console.warn('Supabase load failed:', e);
+    setSyncDot('err');
+  }
+}
+
+function subscribeToChanges() {
+  sb.channel('whw-checklist')
+    .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'checklist_state' },
+        payload => {
+          const { hiker, phase_idx, task_idx, state } = payload.new;
+          if (!allStates[hiker])            allStates[hiker]            = {};
+          if (!allStates[hiker][phase_idx]) allStates[hiker][phase_idx] = {};
+          allStates[hiker][phase_idx][task_idx] = state;
+          if (document.getElementById('checklist').classList.contains('active')) renderChecklist();
+        })
+    .subscribe();
+}
+
+function setSyncDot(s) {
+  const dot = document.getElementById('sync-dot');
+  if (!dot) return;
+  dot.className = 'sync-dot' + (s === 'syncing' ? ' syncing' : s === 'err' ? ' err' : '');
+  dot.title = s === 'ok' ? 'Synced' : s === 'syncing' ? 'Syncing…' : 'Sync error — check connection';
+}
+
+// ── Checklist helpers ─────────────────────────────────────────────────────────
+function getS(pi, ti, ni) {
+  return allStates[NAMES[ni]]?.[pi]?.[ti] ?? 0;
+}
+
+function cycleS(pi, ti) {
+  if (!currentHiker) return;
+  const h = currentHiker;
+  if (!allStates[h])     allStates[h]     = {};
+  if (!allStates[h][pi]) allStates[h][pi] = {};
+  const newVal = ((allStates[h][pi][ti] ?? 0) + 1) % 3;
+  allStates[h][pi][ti] = newVal;
+  setSyncDot('syncing');
+  sb.from('checklist_state')
+    .upsert({ hiker: h, phase_idx: +pi, task_idx: +ti, state: newVal, updated_at: new Date().toISOString() })
+    .then(({ error }) => setSyncDot(error ? 'err' : 'ok'))
+    .catch(() => setSyncDot('err'));
+}
+
+function icon(s) { return s === 1 ? '✓' : s === 2 ? '✗' : '·'; }
+
+function cellCls(s, isMine) {
+  return 'check-btn ' + (s === 1 ? 'done' : s === 2 ? 'skip' : 'empty') + ' ' + (isMine ? 'mine' : 'theirs');
+}
+
+// ── Render checklist ──────────────────────────────────────────────────────────
+function renderChecklist() {
+  const root = document.getElementById('cl-root');
+  if (!currentHiker) {
+    root.innerHTML = '<div class="cl-msg">Select your name above to view the checklist.</div>';
+    return;
+  }
+  const myNi = NAMES.indexOf(currentHiker);
+  root.innerHTML = '';
+
+  PHASES.forEach((phase, pi) => {
+    const block = document.createElement('div');
+    block.className = 'phase-block';
+    let html = `<div class="phase-header">${phase.label}</div>`;
+    html += `<div class="col-row"><span class="col-name">Task</span>`;
+    NAMES.forEach(n => {
+      html += `<span class="col-name${n === currentHiker ? ' mine' : ''}">${n}</span>`;
+    });
+    html += `</div>`;
+    phase.tasks.forEach((task, ti) => {
+      html += `<div class="task-row"><span class="task-text">${task}</span>`;
+      NAMES.forEach((name, ni) => {
+        const s = getS(pi, ti, ni);
+        html += `<span class="${cellCls(s, ni === myNi)}" data-pi="${pi}" data-ti="${ti}" data-ni="${ni}">${icon(s)}</span>`;
+      });
+      html += `</div>`;
+    });
+    block.innerHTML = html;
+
+    // Attach click only to current hiker's cells
+    block.querySelectorAll(`.check-btn[data-ni="${myNi}"]`).forEach(el => {
+      el.addEventListener('click', function () {
+        const pi = +this.dataset.pi, ti = +this.dataset.ti;
+        cycleS(pi, ti);
+        const s = getS(pi, ti, myNi);
+        this.textContent = icon(s);
+        this.className   = cellCls(s, true);
+      });
+    });
+
+    root.appendChild(block);
+  });
+}
+
+// ── Tab switch ────────────────────────────────────────────────────────────────
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(id).classList.add('active');
+  if (id === 'checklist') renderChecklist();
+}
+
+// ── Checklist data ────────────────────────────────────────────────────────────
+const PHASES = [
+  { label: 'ASAP / Now', tasks: [
+    'Check passport expiry (valid 6+ months past 11 Oct 2026)',
+    'Apply for / renew passport if needed',
+    "Purchase travel insurance (hiking + emergency evacuation) — required by Mac's",
+    'Book flights to Glasgow',
+    'Buy hiking boots (waterproof, ankle support)',
+    'Start base fitness: 3–5 mile walks 3×/week',
+  ]},
+  { label: 'May–June (5–4 months out)', tasks: [
+    'Increase walks to 5–8 miles with hills',
+    'Add leg strength exercises (squats, lunges, calf raises, step-ups)',
+    'Begin back-to-back walking days on weekends',
+    'Wear boots on every training walk (break-in starts now)',
+    'Buy merino wool hiking socks (3+ pairs)',
+    'Buy waterproof jacket & waterproof trousers',
+    'Source a 20–25L daypack',
+    'Consider trekking poles — start practicing if so',
+    'Book lodging for the night before (Milngavie or Glasgow)',
+    'Book lodging for the night after (Fort William, 11 Oct)',
+  ]},
+  { label: 'July (3 months out)', tasks: [
+    'Long walk target: 10–12 miles with loaded daypack',
+    'Do a 2-day back-to-back training hike weekend',
+    "Train in bad weather — don't skip rainy days",
+    'Test waterproofs in actual rain',
+    'Buy base layers (moisture-wicking, no cotton)',
+    'Buy mid layer (fleece or insulated jacket)',
+    'Buy warm hat & gloves',
+    'Buy gaiters',
+    'Assemble blister kit (Compeed, moleskin, anti-chafe balm)',
+    'Assemble first aid kit (painkillers, antiseptic, bandages, tweezers)',
+    "Download Mac's Adventure app",
+    'Buy portable power bank',
+    'See doctor if any health concerns before ramping up',
+  ]},
+  { label: 'August (2 months out)', tasks: [
+    'Long walk target: 15–18 miles with loaded daypack',
+    'Complete a 2–3 day back-to-back hike (dress rehearsal)',
+    'Finalize and test all gear — no surprises on trail',
+    'Buy headlamp with fresh batteries',
+    'Buy sun hat & sunscreen',
+    'Buy reusable water bottle or hydration system (2L)',
+    'Buy lightweight quick-dry towel',
+    "Review Mac's Adventure Trip Information Pack",
+    'Weigh main luggage bag (must be under 20 kg)',
+    'Notify bank of travel dates',
+    'Check credit cards for foreign transaction fees',
+    'Get some GBP cash',
+  ]},
+  { label: 'September (1 month out)', tasks: [
+    'Taper: reduce big mileage, maintain fitness',
+    'Final long confidence walk (12–15 miles)',
+    'Pack and weigh main bag (under 20 kg)',
+    'Pack and test daypack (water, snacks, rain gear, layers, first aid)',
+    'Buy midge repellent (DEET-based)',
+    'Buy waterproof liner or cover for daypack',
+    "Pre-load Mac's Adventure app with offline maps",
+    'Download OS Maps or similar as backup navigation',
+    "Follow up with Mac's on Glencoe shuttle confirmation",
+    'Arrange San Antonio airport transport (departure)',
+    'Arrange Glasgow airport → Milngavie / city transport',
+    "Confirm all Mac's Adventure bookings",
+    'Pack sufficient prescription medications for full trip',
+  ]},
+  { label: 'Final week', tasks: [
+    'Final gear check — nothing new on trail',
+    'Pre-tape known blister hotspots on feet',
+    'Charge all devices and power banks',
+    'Confirm all accommodations and booking references',
+    'Check weather forecast for first few trail days',
+    'Check in for flights online',
+    'Withdraw GBP cash for rural pubs / small B&Bs',
+    'Book Fort William dinner restaurant if not done yet (2+ days advance)',
+    'Book return transport from Fort William (train to Glasgow ~2hrs)',
+    "Look up Glengoyne Distillery hours — it's on route Day 1!",
+  ]},
+  { label: 'Departure day', tasks: [
+    'Passport in carry-on (not checked baggage)',
+    'Insurance policy accessible (screenshot or printout)',
+    "Mac's booking confirmation accessible (BOK00109962)",
+    'Wear or carry-on hiking boots (never check them)',
+    'Power bank charged and in carry-on',
+  ]},
+];
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+(async function init() {
+  const stored = localStorage.getItem(HIKER_KEY);
+  if (stored && NAMES.includes(stored)) {
+    await selectHiker(stored);
+  } else {
+    document.getElementById('picker-overlay').style.display = 'flex';
+  }
+})();
+</script>
+</body>
+</html>
