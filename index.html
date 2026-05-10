@@ -98,6 +98,37 @@
   .checklist-hint { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.5; background: white; border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 0.8rem; }
   .cl-msg { text-align: center; padding: 2.5rem 1rem; color: var(--text-muted); font-size: 0.85rem; }
 
+  /* Training */
+  .region-header { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--highland); margin: 1.25rem 0 0.6rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--highland-light); }
+  .region-header:first-child { margin-top: 0; }
+  .region-sub { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.6rem; }
+  .hike-card { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 0.85rem 1rem; margin-bottom: 0.6rem; }
+  .hike-card.tier1 { border-left: 3px solid var(--highland); }
+  .hike-card.tier2 { border-left: 3px solid var(--loch); }
+  .hike-card.tier3 { border-left: 3px solid var(--gold); }
+  .hike-name { font-family: 'Playfair Display', serif; font-size: 0.95rem; color: var(--text); margin-bottom: 2px; }
+  .hike-name .tier-badge { font-family: 'DM Sans', sans-serif; font-size: 0.6rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; padding: 1px 6px; border-radius: 10px; margin-left: 6px; vertical-align: middle; }
+  .tier-badge.best { background: var(--highland); color: white; }
+  .tier-badge.solid { background: var(--loch); color: white; }
+  .tier-badge.distance { background: var(--gold); color: white; }
+  .hike-meta { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 4px; }
+  .hike-meta span { margin-right: 0.75rem; }
+  .hike-desc { font-size: 0.8rem; color: var(--text); line-height: 1.5; }
+  .hike-why { font-size: 0.75rem; color: var(--highland); line-height: 1.45; margin-top: 4px; font-style: italic; }
+  .hike-tag { display: inline-block; font-size: 0.62rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; padding: 2px 7px; border-radius: 8px; margin-right: 4px; margin-top: 4px; background: var(--mist); color: var(--text-muted); }
+  .hike-tag.elevation { background: #E8F0E8; color: var(--highland); }
+  .hike-tag.distance { background: #E8EAF0; color: #4A5A8A; }
+  .hike-tag.terrain { background: #F0EAE8; color: #8A5A3A; }
+  .hike-tag.water { background: #E8EFF0; color: var(--loch); }
+  .training-plan { background: white; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 0.75rem; margin-top: 0.75rem; }
+  .training-plan-header { background: var(--highland); color: white; padding: 0.6rem 1rem; font-family: 'Playfair Display', serif; font-size: 0.9rem; }
+  .training-row { display: grid; grid-template-columns: 90px 1fr 1fr; padding: 0.45rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.78rem; align-items: baseline; }
+  .training-row:last-child { border-bottom: none; }
+  .training-row .week { color: var(--text-muted); font-weight: 500; }
+  .training-row .workout { color: var(--text); }
+  .training-row .purpose { color: var(--text-muted); }
+  .training-footer { font-size: 0.75rem; color: var(--text-muted); line-height: 1.6; background: var(--mist); padding: 0.6rem 1rem; border-top: 1px solid var(--border); }
+
   /* Tips */
   .tip-card { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 0.85rem 1rem; margin-bottom: 0.6rem; }
   .tip-label { font-size: 0.68rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--loch); margin-bottom: 4px; }
@@ -178,6 +209,7 @@
   <button class="tab" onclick="switchTab('itinerary',this)">Itinerary</button>
   <button class="tab active" onclick="switchTab('checklist',this)">Checklist</button>
   <button class="tab" onclick="switchTab('tips',this)">Tips</button>
+  <button class="tab" onclick="switchTab('training',this)">Training</button>
   <button class="tab" onclick="switchTab('logistics',this)">Logistics</button>
 </div>
 
@@ -323,6 +355,184 @@
   </div>
 
   <!-- TIPS -->
+  <div id="training" class="panel">
+
+    <div class="region-header">⛰️ San Antonio (Sharky)</div>
+    <div class="region-sub">Best training options within reach of home base</div>
+
+    <div class="hike-card tier1">
+      <div class="hike-name">Government Canyon SNA <span class="tier-badge best">Best</span></div>
+      <div class="hike-meta"><span>~30 min NW</span><span>Up to 12.3 mi</span><span>1,079 ft gain</span><span>$6</span></div>
+      <div class="hike-desc">40 miles of trails over rugged limestone terrain. The Outer Loop (12.3 mi, 774 ft) is the longest single-day training hike in the SA area. Far Reaches + Twin Oaks + Joe Johnston = ~9.5 mi of varied rocky terrain.</div>
+      <div class="hike-why">Longest trails near SA, best elevation, most Scotland-like underfoot — rocky, uneven, muddy after rain.</div>
+      <div><span class="hike-tag elevation">Elevation</span><span class="hike-tag distance">Long Distance</span><span class="hike-tag terrain">Rocky Terrain</span><span class="hike-tag water">Muddy When Wet</span></div>
+    </div>
+
+    <div class="hike-card tier1">
+      <div class="hike-name">Hill Country SNA <span class="tier-badge best">Best</span></div>
+      <div class="hike-meta"><span>~1 hr NW (Bandera)</span><span>8+ mi loops</span><span>1,868 ft summit</span><span>$6</span></div>
+      <div class="hike-desc">5,400 acres of peaked hills, the closest thing to Highland topography in Texas. Spring Branch Trail has the most elevation gain (~900 ft). Northern loop trails string together 8+ miles of real climbing.</div>
+      <div class="hike-why">Best elevation training within an hour. Hosts the Bandera 100K — if it's good enough for that…</div>
+      <div><span class="hike-tag elevation">Elevation</span><span class="hike-tag terrain">Rocky Terrain</span></div>
+    </div>
+
+    <div class="hike-card tier1">
+      <div class="hike-name">Lost Maples SNA <span class="tier-badge best">Best</span></div>
+      <div class="hike-meta"><span>~1.5 hrs NW</span><span>5.2 mi loop</span><span>1,276 ft gain</span><span>$6</span></div>
+      <div class="hike-desc">Steep, rugged canyon terrain — the closest you'll get to Scottish Highland topography. The East Trail climb is a lung-buster (300 ft in one push). 11 miles of trails total through limestone canyons.</div>
+      <div class="hike-why">Best single elevation gain in the area. Reserve early Oct–Nov (fall foliage crowds).</div>
+      <div><span class="hike-tag elevation">Elevation</span><span class="hike-tag terrain">Rocky Terrain</span><span class="hike-tag water">Creek Crossings</span></div>
+    </div>
+
+    <div class="hike-card tier2">
+      <div class="hike-name">Friedrich Wilderness Park</div>
+      <div class="hike-meta"><span>NW SA, 20 min</span><span>~4-5 mi (loops)</span><span>350 ft gain</span><span>Free</span></div>
+      <div class="hike-desc">Main Loop is 1.7 mi with 350 ft gain — short but steep. Multiple loops combine for ~5 mi total. Best in-town option with actual elevation.</div>
+      <div class="hike-why">Quick access, solid hill reps. Do multiple laps for distance.</div>
+      <div><span class="hike-tag elevation">Elevation</span></div>
+    </div>
+
+    <div class="hike-card tier2">
+      <div class="hike-name">Eisenhower Park</div>
+      <div class="hike-meta"><span>NW SA, 25 min</span><span>2.9 mi</span><span>282 ft gain</span><span>Free</span></div>
+      <div class="hike-desc">Hillview Trail is the climb. Connects to Salado Creek Greenway for longer outings.</div>
+      <div class="hike-why">Good warm-up hill, plus greenway access for adding distance.</div>
+      <div><span class="hike-tag elevation">Elevation</span><span class="hike-tag distance">Long Distance</span></div>
+    </div>
+
+    <div class="hike-card tier2">
+      <div class="hike-name">Enchanted Rock SNA</div>
+      <div class="hike-meta"><span>~1.5 hrs NW (Fredericksburg)</span><span>11 mi trails</span><span>425 ft gain (summit)</span><span>$8</span></div>
+      <div class="hike-desc">The iconic pink granite batholith. Summit Trail is short (1.3 mi) but steep. Full loop (Summit + Echo Canyon + Turquoise + Moss) gives a proper day out. Great weekend trip with the vaqueros.</div>
+      <div class="hike-why">Steep climb practice, fun group day. Reservations required — sells out fast.</div>
+      <div><span class="hike-tag elevation">Elevation</span><span class="hike-tag terrain">Rocky Terrain</span></div>
+    </div>
+
+    <div class="hike-card tier3">
+      <div class="hike-name">SA Greenway Trails <span class="tier-badge distance">Endurance</span></div>
+      <div class="hike-meta"><span>City-wide</span><span>65+ mi connected</span><span>Flat</span><span>Free</span></div>
+      <div class="hike-desc">Salado Creek, Leon Creek, and Medina River greenways — 65+ miles of paved/gravel trails. Salado Creek North alone is 20 mi end-to-end. Link Salado → Leon → Mission Reach for 40+ miles.</div>
+      <div class="hike-why">Flat but perfect for sustained distance and boot break-in. Load your pack to 15-20 lbs and walk 10 miles — teaches you more about your gear than any hill.</div>
+      <div><span class="hike-tag distance">Long Distance</span></div>
+    </div>
+
+    <div class="region-header">🌴 Los Angeles (Ross)</div>
+    <div class="region-sub">The San Gabriels are a proper mountain range — Ross has no excuse</div>
+
+    <div class="hike-card tier1">
+      <div class="hike-name">Bridge to Nowhere <span class="tier-badge best">Best</span></div>
+      <div class="hike-meta"><span>~1 hr from downtown</span><span>10 mi RT</span><span>900 ft gain</span></div>
+      <div class="hike-desc">Multiple river crossings (sound familiar? 👀 Scotland in miniature). Follows the East Fork of the San Gabriel River to an abandoned 1936 bridge. Rocky, varied terrain with real water crossings.</div>
+      <div class="hike-why">The closest thing to WHW conditions in LA — river crossings, rocky path, sustained walking. Essential training.</div>
+      <div><span class="hike-tag water">River Crossings</span><span class="hike-tag distance">Long Distance</span><span class="hike-tag terrain">Rocky Terrain</span></div>
+    </div>
+
+    <div class="hike-card tier1">
+      <div class="hike-name">Mount Wilson via Sierra Madre</div>
+      <div class="hike-meta"><span>Angeles NF</span><span>13.3 mi RT</span><span>~4,000 ft gain</span></div>
+      <div class="hike-desc">Nicknamed the "Death March" for good reason. The biggest elevation day you can do near LA. Starts on fire roads, cuts into steep singletrack.</div>
+      <div class="hike-why">If Ross can do this comfortably, WHW days will feel manageable. Elite leg strength builder.</div>
+      <div><span class="hike-tag elevation">Elevation</span><span class="hike-tag distance">Long Distance</span></div>
+    </div>
+
+    <div class="hike-card tier1">
+      <div class="hike-name">Cucamonga Peak via Icehouse Canyon</div>
+      <div class="hike-meta"><span>~90 min from LA</span><span>11.6 mi RT</span><span>~3,900 ft gain</span></div>
+      <div class="hike-desc">Serious elevation, rocky terrain, proper mountain conditions. Great weekend challenge with panoramic summit views.</div>
+      <div class="hike-why">Best weekend-mission elevation training near LA.</div>
+      <div><span class="hike-tag elevation">Elevation</span><span class="hike-tag terrain">Rocky Terrain</span></div>
+    </div>
+
+    <div class="hike-card tier2">
+      <div class="hike-name">PCT — San Gabriel Sections</div>
+      <div class="hike-meta"><span>Angeles NF</span><span>10–15+ mi segments</span><span>Variable</span></div>
+      <div class="hike-desc">String together long segments of the Pacific Crest Trail through the San Gabriels. Mount Williamson section: 3.2 mi, 1,577 ft gain as a shorter option.</div>
+      <div class="hike-why">Real trail walking, not just day hikes. Best for building multi-hour endurance.</div>
+      <div><span class="hike-tag distance">Long Distance</span><span class="hike-tag elevation">Elevation</span></div>
+    </div>
+
+    <div class="hike-card tier2">
+      <div class="hike-name">Griffith — Mount Hollywood Loops</div>
+      <div class="hike-meta"><span>Central LA</span><span>3–6 mi per loop</span><span>500–800 ft per lap</span><span>Free</span></div>
+      <div class="hike-desc">Shorter but you can loop it multiple times. Super convenient from anywhere in LA. Decent elevation per lap.</div>
+      <div class="hike-why">Best after-work training option. Do 3-4 laps with a loaded pack.</div>
+      <div><span class="hike-tag elevation">Elevation</span></div>
+    </div>
+
+    <div class="hike-card tier3">
+      <div class="hike-name">LA River Path / Ballona Creek <span class="tier-badge distance">Endurance</span></div>
+      <div class="hike-meta"><span>City-wide</span><span>7+ mi one way</span><span>Flat</span><span>Free</span></div>
+      <div class="hike-desc">Flat, long, and loooong. Ballona Creek is ~7 mi one way, paved. Won't build hill fitness but builds time on feet.</div>
+      <div class="hike-why">Boot break-in and back-to-back distance days. Load the pack and walk.</div>
+      <div><span class="hike-tag distance">Long Distance</span></div>
+    </div>
+
+    <div class="region-header">🤠 New Braunfels (Ben)</div>
+    <div class="region-sub">The Hill Country is flat around NB — Ben needs to drive a bit</div>
+
+    <div class="hike-card tier1">
+      <div class="hike-name">Guadalupe River State Park</div>
+      <div class="hike-meta"><span>~30 min west</span><span>13 mi trails</span><span>Modest hills</span><span>$7</span></div>
+      <div class="hike-desc">Best trail network near NB. Multiple loops you can string together for 6–10 miles. Rocky limestone terrain. Prairie + Painted Bunting + Barred Owl + Live Oak Loop is the popular long route.</div>
+      <div class="hike-why">Best nearby distance option. String all 13 miles together for a proper day.</div>
+      <div><span class="hike-tag distance">Long Distance</span><span class="hike-tag terrain">Rocky Terrain</span></div>
+    </div>
+
+    <div class="hike-card tier1">
+      <div class="hike-name">Government Canyon SNA</div>
+      <div class="hike-meta"><span>~45 min south</span><span>Up to 12.3 mi</span><span>1,079 ft gain</span><span>$6</span></div>
+      <div class="hike-desc">(See San Antonio listing above.) The best elevation and distance within 45 min of NB. Ben should make this his regular weekend hike.</div>
+      <div class="hike-why">Worth the drive. Best elevation training Ben can get without going to Bandera.</div>
+      <div><span class="hike-tag elevation">Elevation</span><span class="hike-tag distance">Long Distance</span><span class="hike-tag terrain">Rocky Terrain</span></div>
+    </div>
+
+    <div class="hike-card tier1">
+      <div class="hike-name">Hill Country SNA</div>
+      <div class="hike-meta"><span>~50 min west (Bandera)</span><span>8+ mi loops</span><span>1,868 ft summit</span><span>$6</span></div>
+      <div class="hike-desc">(See San Antonio listing above.) Ben's best option for real elevation — same hills Sharky's training on.</div>
+      <div class="hike-why">Real hills, real distance. Ben should coordinate weekend trips with Sharky here.</div>
+      <div><span class="hike-tag elevation">Elevation</span><span class="hike-tag terrain">Rocky Terrain</span></div>
+    </div>
+
+    <div class="hike-card tier2">
+      <div class="hike-name">Canyon Park — Canyon Lake</div>
+      <div class="hike-meta"><span>~20 min north</span><span>7.6 mi rocky trail</span><span>Some elevation</span></div>
+      <div class="hike-desc">Rocky peninsula trail around Canyon Lake. Good mid-distance option close to home. Popular with mountain bikers.</div>
+      <div class="hike-why">Closest decent rocky terrain. Decent for a quick training session.</div>
+      <div><span class="hike-tag terrain">Rocky Terrain</span></div>
+    </div>
+
+    <div class="hike-card tier2">
+      <div class="hike-name">Panther Canyon Nature Trail</div>
+      <div class="hike-meta"><span>In NB (Landa Park)</span><span>1.3 mi</span><span>167 ft gain</span><span>Free</span></div>
+      <div class="hike-desc">The most elevation in NB proper — which tells you something. Short but doable in laps for hill reps.</div>
+      <div class="hike-why">Best NB has to offer in town. Do laps with a loaded pack for a workout.</div>
+      <div><span class="hike-tag elevation">Elevation</span></div>
+    </div>
+
+    <div class="hike-card tier3">
+      <div class="hike-name">NB River Trails / Landa Park <span class="tier-badge distance">Endurance</span></div>
+      <div class="hike-meta"><span>In town</span><span>8+ mi</span><span>Flat</span><span>Free</span></div>
+      <div class="hike-desc">Flat, easy river trails. Not going to build hill fitness but good for sustained distance walking and boot break-in.</div>
+      <div class="hike-why">Load the pack, do 10+ miles, break in those boots.</div>
+      <div><span class="hike-tag distance">Long Distance</span></div>
+    </div>
+
+    <div class="region-header">📋 Training Plan</div>
+    <div class="region-sub">Suggested weekly plan for all three vaqueros — adjust to fitness level</div>
+
+    <div class="training-plan">
+      <div class="training-plan-header">Weekly Schedule</div>
+      <div class="training-row"><span class="week">Weekly</span><span class="workout">Greenway/river walk, 8–12 mi</span><span class="purpose">Distance base, boot break-in</span></div>
+      <div class="training-row"><span class="week">Weekly</span><span class="workout">Hill session (local park)</span><span class="purpose">Elevation, rocky terrain</span></div>
+      <div class="training-row"><span class="week">Weekend</span><span class="workout">Long day hike (10–14 mi)</span><span class="purpose">Endurance + pack testing</span></div>
+      <div class="training-row"><span class="week">Monthly</span><span class="workout">Big elevation day trip</span><span class="purpose">Hill fitness, group hike</span></div>
+      <div class="training-row"><span class="week">Late Sep</span><span class="workout">Back-to-back: 12+12 mi</span><span class="purpose">Multi-day endurance sim</span></div>
+      <div class="training-footer"><strong>Key things you can't train for in Texas:</strong> boggy ground, wet rock, stream crossings, and 7 consecutive days. For those, load your pack to 15–20 lbs and do long flat walks — that teaches you more about your boots and pack than any hill session. <strong>Break in your boots NOW.</strong> 8–12 weeks of active use before departure.</div>
+    </div>
+
+  </div>
+
   <div id="tips" class="panel">
 
     <div class="section-label">Boots — when to buy &amp; break in</div>
