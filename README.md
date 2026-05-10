@@ -1,67 +1,79 @@
 # WHW 2026 Trip Companion
 
-Static HTML app for the West Highland Way trip (Sharky, R2, Mango, Madness — October 2026). Shared checklist state stored in Supabase; hosted on Netlify.
+Static web app for the West Highland Way hike (Sharky, Paco, Mango, Madness — 4–11 October 2026).
+
+**Features:** itinerary, synced group checklist, per-day shared notes, countdown, tips, and logistics.
+
+- Frontend: single file — `index.html`
+- Backend: Supabase (Postgres + Realtime)
+- Hosting: Netlify, auto-deploys from `main`
 
 ---
 
-## Deploying / updating
+## Making updates
 
-1. Log in to netlify.com
-2. Go to your site's dashboard → **Deploys** tab
-3. Drag the `whw/` folder onto the deploy drop zone
-4. Done — same URL, updated content
+Push to `main` — Netlify deploys automatically. No build step.
 
-For the first deploy, go to **Sites → Add new site → Deploy manually** and drag the folder there.
-
-> Deploy the whole `whw/` folder, not individual files — Netlify uses the folder as the site root.
+For safe update rules (especially around hiker names and day ordering), see **`AGENTS.md`**.
 
 ---
 
 ## Database — Supabase
 
 **Project URL:** `https://qghfnmsoarntmmclomfd.supabase.co`  
-**Dashboard:** supabase.com → your project  
-**Schema file:** `whw_schema.sql`
+**Schema file:** `whw_schema.sql` (reference — see warning below before running)
 
 ### Table: `checklist_state`
 
 | Column | Type | Notes |
 |---|---|---|
-| `hiker` | text (PK) | One of: Sharky, R2, Mango, Madness |
+| `hiker` | text (PK) | One of: Sharky, Paco, Mango, Madness |
 | `phase_idx` | int (PK) | 0-indexed checklist phase |
 | `task_idx` | int (PK) | 0-indexed task within phase |
 | `state` | smallint | 0 = unchecked, 1 = done, 2 = skipped |
 | `updated_at` | timestamptz | Set on each write |
 
-One row per hiker × task. Rows are created on first interaction (no seed data needed). Absence of a row means state 0.
+One row per hiker × task. Rows are created on first interaction. A missing row means state 0.
 
-### Resetting the checklist
+### Table: `day_notes`
 
-To clear everyone's progress:
+| Column | Type | Notes |
+|---|---|---|
+| `day_idx` | int (PK) | 0–6, maps to Day 1–7 in order |
+| `content` | text | Free-text group notes for that day |
+| `updated_by` | text | Hiker name of last editor |
+| `updated_at` | timestamptz | Set on each write |
 
+### Useful SQL
+
+Clear all checklist progress:
 ```sql
 delete from public.checklist_state;
 ```
 
-To clear one hiker:
-
+Clear one hiker's progress:
 ```sql
 delete from public.checklist_state where hiker = 'Sharky';
 ```
 
-### Re-running the schema from scratch
+Clear notes for one day:
+```sql
+delete from public.day_notes where day_idx = 0;
+```
 
-Run `whw_schema.sql` in the Supabase SQL editor. It drops and recreates the table cleanly.
+### ⚠️ Schema reset warning
+
+`whw_schema.sql` **drops and recreates both tables** — running it against the live project erases all checklist progress and group notes. Only use it to set up a fresh Supabase project. Use `ALTER TABLE` for live schema changes.
 
 ---
 
-## Credentials in the HTML
+## Credentials
 
-Both values live at the top of the `<script>` block in `WHW_Trip_Companion.html`:
+Both values are at the top of the `<script>` block in `index.html`:
 
 ```js
 const SUPABASE_URL      = 'https://qghfnmsoarntmmclomfd.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_QxgqVIaT7jcOTX33MKt3Vg_b8Il-kqK';
 ```
 
-The anon key is safe to be public — it is intentionally publishable and scoped by row-level security.
+The anon key is safe to be public — it is intentionally publishable and scoped by Supabase row-level security policies.
