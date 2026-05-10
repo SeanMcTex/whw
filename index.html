@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WHW 2026 — Sharky, R2, Mango & Madness</title>
+<title>WHW 2026 — Sharky, Paco, Mango & Madness</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -136,7 +136,7 @@
     <p>Your checklist syncs with the group — everyone sees each other's progress in real time.</p>
     <div class="picker-grid">
       <button class="picker-btn" onclick="selectHiker('Sharky')">Sharky</button>
-      <button class="picker-btn" onclick="selectHiker('R2')">R2</button>
+      <button class="picker-btn" onclick="selectHiker('Paco')">Paco</button>
       <button class="picker-btn" onclick="selectHiker('Mango')">Mango</button>
       <button class="picker-btn" onclick="selectHiker('Madness')">Madness</button>
     </div>
@@ -147,7 +147,7 @@
   <div class="header-top">
     <div>
       <h1>West Highland Way</h1>
-      <div class="header-sub">SHARKY · R2 · MANGO · MADNESS &nbsp;·&nbsp; OCTOBER 2026</div>
+      <div class="header-sub">SHARKY · PACO · MANGO · MADNESS &nbsp;·&nbsp; OCTOBER 2026</div>
     </div>
     <div class="booking-badge">
       <strong>BOK00109962</strong>
@@ -164,8 +164,8 @@
 </div>
 
 <div class="tabs">
-  <button class="tab active" onclick="switchTab('itinerary',this)">Itinerary</button>
-  <button class="tab" onclick="switchTab('checklist',this)">Checklist</button>
+  <button class="tab" onclick="switchTab('itinerary',this)">Itinerary</button>
+  <button class="tab active" onclick="switchTab('checklist',this)">Checklist</button>
   <button class="tab" onclick="switchTab('tips',this)">Tips & Boots</button>
   <button class="tab" onclick="switchTab('logistics',this)">Logistics</button>
 </div>
@@ -180,7 +180,7 @@
 <div class="content">
 
   <!-- ITINERARY -->
-  <div id="itinerary" class="panel active">
+  <div id="itinerary" class="panel">
 
     <div class="day-card">
       <div class="day-header">
@@ -306,7 +306,7 @@
   </div><!-- /itinerary -->
 
   <!-- CHECKLIST -->
-  <div id="checklist" class="panel">
+  <div id="checklist" class="panel active">
     <div class="checklist-hint">Tap your column to cycle: <strong>✓</strong> done → <strong>✗</strong> skip → clear. All four hikers' progress is visible to everyone.</div>
     <div id="cl-root"></div>
   </div>
@@ -442,7 +442,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_QxgqVIaT7jcOTX33MKt3Vg_b8Il-kqK';
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const NAMES = ['Sharky', 'R2', 'Mango', 'Madness'];
+const NAMES = ['Sharky', 'Paco', 'Mango', 'Madness'];
 const HIKER_KEY = 'whw_hiker';
 
 // State: allStates[hikerName][phaseIdx][taskIdx] = 0|1|2
@@ -458,7 +458,7 @@ async function selectHiker(name) {
   document.getElementById('hiker-name-display').textContent = name;
   await loadAllStates();
   subscribeToChanges();
-  if (document.getElementById('checklist').classList.contains('active')) renderChecklist();
+  renderChecklist();
 }
 
 function changeHiker() {
