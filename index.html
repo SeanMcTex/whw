@@ -32,6 +32,10 @@
   .booking-badge { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 0.5rem 0.75rem; font-size: 0.72rem; text-align: right; white-space: nowrap; }
   .booking-badge strong { display: block; font-size: 0.85rem; letter-spacing: 0.03em; }
 
+  .countdown { text-align: center; padding: 0.5rem 0 0; font-size: 0.95rem; color: rgba(255,255,255,0.85); letter-spacing: 0.02em; }
+  .countdown strong { font-size: 1.6rem; color: #fff; display: block; line-height: 1; }
+  .countdown-label { font-size: 0.7rem; text-transform: uppercase; opacity: 0.6; letter-spacing: 0.06em; }
+
   /* Stats bar */
   .stats-bar { display: flex; background: var(--highland-light); color: white; }
   .stat { flex: 1; text-align: center; padding: 0.75rem 0.5rem; border-right: 1px solid rgba(255,255,255,0.15); }
@@ -162,14 +166,12 @@
       Mac's Adventure
     </div>
   </div>
+  <div class="countdown" id="countdown"></div>
 </div>
 
 <div class="stats-bar">
   <div class="stat"><div class="stat-val">96</div><div class="stat-lbl">miles</div></div>
   <div class="stat"><div class="stat-val">7</div><div class="stat-lbl">hiking days</div></div>
-  <div class="stat"><div class="stat-val">4 Oct</div><div class="stat-lbl">start</div></div>
-  <div class="stat"><div class="stat-val">11 Oct</div><div class="stat-lbl">finish</div></div>
-  <div class="stat"><div class="stat-val" id="countdown-val">—</div><div class="stat-lbl">days to go</div></div>
 </div>
 
 <div class="tabs">
@@ -622,14 +624,19 @@ function injectNoteAreas() {
   });
 }
 
-// ── Countdown ─────────────────────────────────────────────────────────────────
-function initCountdown() {
+// ── Countdown ──────────────────────────────────────────────────────────────
+(function() {
   const start = new Date('2026-10-04T00:00:00');
-  const today = new Date(); today.setHours(0,0,0,0);
-  const days  = Math.ceil((start - today) / 86400000);
-  const el    = document.getElementById('countdown-val');
-  if (el) el.textContent = days > 0 ? days : '🏔️';
-}
+  const now = new Date();
+  const diff = start - now;
+  const el = document.getElementById('countdown');
+  if (diff <= 0) {
+    el.innerHTML = '<strong>Let\'s go!</strong><span class="countdown-label">The hike is on!</span>';
+  } else {
+    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+    el.innerHTML = '<strong>' + days + '</strong><span class="countdown-label">days to go</span>';
+  }
+})();
 
 // ── Checklist helpers ─────────────────────────────────────────────────────────
 function getS(pi, ti, ni) {
@@ -799,7 +806,6 @@ const PHASES = [
 // ── Init ──────────────────────────────────────────────────────────────────────
 (async function init() {
   injectNoteAreas();
-  initCountdown();
   await loadNotes();
   subscribeToNoteChanges();
   const stored = localStorage.getItem(HIKER_KEY);
