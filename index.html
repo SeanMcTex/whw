@@ -46,7 +46,7 @@
   /* Tabs */
   .tabs { display: flex; background: white; border-bottom: 2px solid var(--border); overflow-x: auto; }
   .tab { flex: 1; min-width: 70px; padding: 0.8rem 0.5rem; background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 0.8rem; font-weight: 500; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.15s; white-space: nowrap; }
-  .tab.active { color: var(--highland); border-bottom-color: var(--highland); }
+  .tab.active { color: #fff; background: var(--highland); border-bottom-color: var(--highland); border-radius: 8px 8px 0 0; }
   .tab:hover:not(.active) { color: var(--text); background: var(--mist); }
 
   /* Hiker bar */
@@ -98,6 +98,38 @@
   .checklist-hint { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.5; background: white; border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 0.8rem; }
   .cl-msg { text-align: center; padding: 2.5rem 1rem; color: var(--text-muted); font-size: 0.85rem; }
 
+  /* Training */
+  .region-header { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--highland); margin: 1.25rem 0 0.6rem; padding-bottom: 0.3rem; border-bottom: 2px solid var(--highland-light); }
+  .region-header:first-child { margin-top: 0; }
+  .your-region-badge { display: inline-block; font-family: 'DM Sans', sans-serif; font-size: 0.62rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; background: var(--highland); color: white; padding: 2px 8px; border-radius: 10px; margin-left: 8px; vertical-align: middle; }
+  .region-sub { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.6rem; }
+  .hike-card { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 0.85rem 1rem; margin-bottom: 0.6rem; }
+  .hike-card.tier1 { border-left: 3px solid var(--highland); }
+  .hike-card.tier2 { border-left: 3px solid var(--loch); }
+  .hike-card.tier3 { border-left: 3px solid var(--gold); }
+  .hike-name { font-family: 'Playfair Display', serif; font-size: 0.95rem; color: var(--text); margin-bottom: 2px; }
+  .hike-name .tier-badge { font-family: 'DM Sans', sans-serif; font-size: 0.6rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; padding: 1px 6px; border-radius: 10px; margin-left: 6px; vertical-align: middle; }
+  .tier-badge.best { background: var(--highland); color: white; }
+  .tier-badge.solid { background: var(--loch); color: white; }
+  .tier-badge.distance { background: var(--gold); color: white; }
+  .hike-meta { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 4px; }
+  .hike-meta span { margin-right: 0.75rem; }
+  .hike-desc { font-size: 0.8rem; color: var(--text); line-height: 1.5; }
+  .hike-why { font-size: 0.75rem; color: var(--highland); line-height: 1.45; margin-top: 4px; font-style: italic; }
+  .hike-tag { display: inline-block; font-size: 0.62rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; padding: 2px 7px; border-radius: 8px; margin-right: 4px; margin-top: 4px; background: var(--mist); color: var(--text-muted); }
+  .hike-tag.elevation { background: #E8F0E8; color: var(--highland); }
+  .hike-tag.distance { background: #E8EAF0; color: #4A5A8A; }
+  .hike-tag.terrain { background: #F0EAE8; color: #8A5A3A; }
+  .hike-tag.water { background: #E8EFF0; color: var(--loch); }
+  .training-plan { background: white; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 0.75rem; margin-top: 0.75rem; }
+  .training-plan-header { background: var(--highland); color: white; padding: 0.6rem 1rem; font-family: 'Playfair Display', serif; font-size: 0.9rem; }
+  .training-row { display: grid; grid-template-columns: 90px 1fr 1fr; padding: 0.45rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.78rem; align-items: baseline; }
+  .training-row:last-child { border-bottom: none; }
+  .training-row .week { color: var(--text-muted); font-weight: 500; }
+  .training-row .workout { color: var(--text); }
+  .training-row .purpose { color: var(--text-muted); }
+  .training-footer { font-size: 0.75rem; color: var(--text-muted); line-height: 1.6; background: var(--mist); padding: 0.6rem 1rem; border-top: 1px solid var(--border); }
+
   /* Tips */
   .tip-card { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 0.85rem 1rem; margin-bottom: 0.6rem; }
   .tip-label { font-size: 0.68rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--loch); margin-bottom: 4px; }
@@ -128,6 +160,7 @@
   .day-notes { width: 100%; min-height: 56px; border: 1px solid var(--border); border-radius: 6px; padding: 0.45rem 0.6rem; font-family: 'DM Sans', sans-serif; font-size: 0.8rem; color: var(--text); resize: vertical; background: var(--mist); line-height: 1.5; }
   .day-notes:focus { outline: none; border-color: var(--loch); background: white; }
   .day-notes:disabled { opacity: 0.55; cursor: not-allowed; }
+  .day-notes.guest-view { opacity: 0.85; }
   .notes-meta { font-size: 0.67rem; color: var(--text-muted); margin-top: 3px; min-height: 1em; }
 
   @keyframes blink { 0%,100% { opacity: 0.35; } 50% { opacity: 1; } }
@@ -145,13 +178,14 @@
 <div class="picker-overlay" id="picker-overlay">
   <div class="picker-modal">
     <h2>Who are you?</h2>
-    <p>Your checklist syncs with the group — everyone sees each other's progress in real time.</p>
+    <p>Pick your name to track your checklist. Or <strong>just browse as a Guest</strong> — no tracking, just looking.</p>
     <div class="picker-grid">
       <button class="picker-btn" onclick="selectHiker('Sharky')">Sharky</button>
       <button class="picker-btn" onclick="selectHiker('Paco')">Paco</button>
       <button class="picker-btn" onclick="selectHiker('Mango')">Mango</button>
       <button class="picker-btn" onclick="selectHiker('Madness')">Madness</button>
     </div>
+    <button class="picker-btn" style="margin-top:1rem;width:100%;background:var(--mist);font-size:0.85rem;" onclick="selectHiker('Guest')">Just looking — Guest</button>
   </div>
 </div>
 
@@ -178,6 +212,7 @@
   <button class="tab" onclick="switchTab('itinerary',this)">Itinerary</button>
   <button class="tab active" onclick="switchTab('checklist',this)">Checklist</button>
   <button class="tab" onclick="switchTab('tips',this)">Tips</button>
+  <button class="tab" onclick="switchTab('training',this)">Training</button>
   <button class="tab" onclick="switchTab('logistics',this)">Logistics</button>
 </div>
 
@@ -323,6 +358,183 @@
   </div>
 
   <!-- TIPS -->
+  <div id="training" class="panel">
+
+    <div data-region="sa">
+    <div class="region-header">⛰️ San Antonio (Sharky & Madness)</div>
+    <div class="region-sub">Best training options for Sharky & Madness</div>
+
+    <div class="hike-card tier1">
+      <div class="hike-name">Government Canyon SNA <span class="tier-badge best">Best</span></div>
+      <div class="hike-meta"><span>~30 min NW</span><span>Up to 12.3 mi</span><span>1,079 ft gain</span><span>$6</span></div>
+      <div class="hike-desc">40 miles of trails over rugged limestone terrain. The Outer Loop (12.3 mi, 774 ft) is the longest single-day training hike in the SA area. Far Reaches + Twin Oaks + Joe Johnston = ~9.5 mi of varied rocky terrain.</div>
+      <div class="hike-why">Longest trails near SA, best elevation, most Scotland-like underfoot — rocky, uneven, muddy after rain.</div>
+      <div><span class="hike-tag elevation">Elevation</span><span class="hike-tag distance">Long Distance</span><span class="hike-tag terrain">Rocky Terrain</span><span class="hike-tag water">Muddy When Wet</span></div>
+    </div>
+
+    <div class="hike-card tier1">
+      <div class="hike-name">Hill Country SNA <span class="tier-badge best">Best</span></div>
+      <div class="hike-meta"><span>~1 hr NW (Bandera)</span><span>8+ mi loops</span><span>1,868 ft summit</span><span>$6</span></div>
+      <div class="hike-desc">5,400 acres of peaked hills, the closest thing to Highland topography in Texas. Spring Branch Trail has the most elevation gain (~900 ft). Northern loop trails string together 8+ miles of real climbing.</div>
+      <div class="hike-why">Best elevation training within an hour. Hosts the Bandera 100K — if it's good enough for that…</div>
+      <div><span class="hike-tag elevation">Elevation</span><span class="hike-tag terrain">Rocky Terrain</span></div>
+    </div>
+
+    <div class="hike-card tier1">
+      <div class="hike-name">Lost Maples SNA <span class="tier-badge best">Best</span></div>
+      <div class="hike-meta"><span>~1.5 hrs NW</span><span>5.2 mi loop</span><span>1,276 ft gain</span><span>$6</span></div>
+      <div class="hike-desc">Steep, rugged canyon terrain — the closest you'll get to Scottish Highland topography. The East Trail climb is a lung-buster (300 ft in one push). 11 miles of trails total through limestone canyons.</div>
+      <div class="hike-why">Best single elevation gain in the area. Reserve early Oct–Nov (fall foliage crowds).</div>
+      <div><span class="hike-tag elevation">Elevation</span><span class="hike-tag terrain">Rocky Terrain</span><span class="hike-tag water">Creek Crossings</span></div>
+    </div>
+
+    <div class="hike-card tier2">
+      <div class="hike-name">Friedrich Wilderness Park</div>
+      <div class="hike-meta"><span>NW SA, 20 min</span><span>~4-5 mi (loops)</span><span>350 ft gain</span><span>Free</span></div>
+      <div class="hike-desc">Main Loop is 1.7 mi with 350 ft gain — short but steep. Multiple loops combine for ~5 mi total. Best in-town option with actual elevation.</div>
+      <div class="hike-why">Quick access, solid hill reps. Do multiple laps for distance.</div>
+      <div><span class="hike-tag elevation">Elevation</span></div>
+    </div>
+
+    <div class="hike-card tier2">
+      <div class="hike-name">Eisenhower Park</div>
+      <div class="hike-meta"><span>NW SA, 25 min</span><span>2.9 mi</span><span>282 ft gain</span><span>Free</span></div>
+      <div class="hike-desc">Hillview Trail is the climb. Connects to Salado Creek Greenway for longer outings.</div>
+      <div class="hike-why">Good warm-up hill, plus greenway access for adding distance.</div>
+      <div><span class="hike-tag elevation">Elevation</span><span class="hike-tag distance">Long Distance</span></div>
+    </div>
+
+    <div class="hike-card tier2">
+      <div class="hike-name">Enchanted Rock SNA</div>
+      <div class="hike-meta"><span>~1.5 hrs NW (Fredericksburg)</span><span>11 mi trails</span><span>425 ft gain (summit)</span><span>$8</span></div>
+      <div class="hike-desc">The iconic pink granite batholith. Summit Trail is short (1.3 mi) but steep. Full loop (Summit + Echo Canyon + Turquoise + Moss) gives a proper day out. Great weekend trip with the vaqueros.</div>
+      <div class="hike-why">Steep climb practice, fun group day. Reservations required — sells out fast.</div>
+      <div><span class="hike-tag elevation">Elevation</span><span class="hike-tag terrain">Rocky Terrain</span></div>
+    </div>
+
+    <div class="hike-card tier3">
+      <div class="hike-name">SA Greenway Trails <span class="tier-badge distance">Endurance</span></div>
+      <div class="hike-meta"><span>City-wide</span><span>65+ mi connected</span><span>Flat</span><span>Free</span></div>
+      <div class="hike-desc">Salado Creek, Leon Creek, and Medina River greenways — 65+ miles of paved/gravel trails. Salado Creek North alone is 20 mi end-to-end. Link Salado → Leon → Mission Reach for 40+ miles.</div>
+      <div class="hike-why">Flat but perfect for sustained distance and boot break-in. Load your pack to 15-20 lbs and walk 10 miles — teaches you more about your gear than any hill.</div>
+      <div><span class="hike-tag distance">Long Distance</span></div>
+    </div>
+    </div><!-- end data-region sa -->
+
+    <div data-region="la">
+    <div class="region-header">🌴 Los Angeles (Paco)</div>
+    <div class="region-sub">The San Gabriels are a proper mountain range — Paco has no excuse</div>
+
+    <div class="hike-card tier1">
+      <div class="hike-name">Bridge to Nowhere <span class="tier-badge best">Best</span></div>
+      <div class="hike-meta"><span>~1 hr from downtown</span><span>10 mi RT</span><span>900 ft gain</span></div>
+      <div class="hike-desc">Multiple river crossings (sound familiar? 👀 Scotland in miniature). Follows the East Fork of the San Gabriel River to an abandoned 1936 bridge. Rocky, varied terrain with real water crossings.</div>
+      <div class="hike-why">The closest thing to WHW conditions in LA — river crossings, rocky path, sustained walking. Essential training.</div>
+      <div><span class="hike-tag water">River Crossings</span><span class="hike-tag distance">Long Distance</span><span class="hike-tag terrain">Rocky Terrain</span></div>
+    </div>
+
+    <div class="hike-card tier1">
+      <div class="hike-name">Mount Wilson via Sierra Madre</div>
+      <div class="hike-meta"><span>Angeles NF</span><span>13.3 mi RT</span><span>~4,000 ft gain</span></div>
+      <div class="hike-desc">Nicknamed the "Death March" for good reason. The biggest elevation day you can do near LA. Starts on fire roads, cuts into steep singletrack.</div>
+      <div class="hike-why">If Ross can do this comfortably, WHW days will feel manageable. Elite leg strength builder.</div>
+      <div><span class="hike-tag elevation">Elevation</span><span class="hike-tag distance">Long Distance</span></div>
+    </div>
+
+    <div class="hike-card tier1">
+      <div class="hike-name">Cucamonga Peak via Icehouse Canyon</div>
+      <div class="hike-meta"><span>~90 min from LA</span><span>11.6 mi RT</span><span>~3,900 ft gain</span></div>
+      <div class="hike-desc">Serious elevation, rocky terrain, proper mountain conditions. Great weekend challenge with panoramic summit views.</div>
+      <div class="hike-why">Best weekend-mission elevation training near LA.</div>
+      <div><span class="hike-tag elevation">Elevation</span><span class="hike-tag terrain">Rocky Terrain</span></div>
+    </div>
+
+    <div class="hike-card tier2">
+      <div class="hike-name">PCT — San Gabriel Sections</div>
+      <div class="hike-meta"><span>Angeles NF</span><span>10–15+ mi segments</span><span>Variable</span></div>
+      <div class="hike-desc">String together long segments of the Pacific Crest Trail through the San Gabriels. Mount Williamson section: 3.2 mi, 1,577 ft gain as a shorter option.</div>
+      <div class="hike-why">Real trail walking, not just day hikes. Best for building multi-hour endurance.</div>
+      <div><span class="hike-tag distance">Long Distance</span><span class="hike-tag elevation">Elevation</span></div>
+    </div>
+
+    <div class="hike-card tier2">
+      <div class="hike-name">Griffith — Mount Hollywood Loops</div>
+      <div class="hike-meta"><span>Central LA</span><span>3–6 mi per loop</span><span>500–800 ft per lap</span><span>Free</span></div>
+      <div class="hike-desc">Shorter but you can loop it multiple times. Super convenient from anywhere in LA. Decent elevation per lap.</div>
+      <div class="hike-why">Best after-work training option. Do 3-4 laps with a loaded pack.</div>
+      <div><span class="hike-tag elevation">Elevation</span></div>
+    </div>
+
+    <div class="hike-card tier3">
+      <div class="hike-name">LA River Path / Ballona Creek <span class="tier-badge distance">Endurance</span></div>
+      <div class="hike-meta"><span>City-wide</span><span>7+ mi one way</span><span>Flat</span><span>Free</span></div>
+      <div class="hike-desc">Flat, long, and loooong. Ballona Creek is ~7 mi one way, paved. Won't build hill fitness but builds time on feet.</div>
+      <div class="hike-why">Boot break-in and back-to-back distance days. Load the pack and walk.</div>
+      <div><span class="hike-tag distance">Long Distance</span></div>
+    </div>
+    </div><!-- end data-region la -->
+
+    <div data-region="nb">
+    <div class="region-header">🤠 New Braunfels (Mango)</div>
+    <div class="region-sub">The Hill Country is flat around NB — Mango needs to drive a bit</div>
+
+    <div class="hike-card tier1">
+      <div class="hike-name">Guadalupe River State Park</div>
+      <div class="hike-meta"><span>~30 min west</span><span>13 mi trails</span><span>Modest hills</span><span>$7</span></div>
+      <div class="hike-desc">Best trail network near NB. Multiple loops you can string together for 6–10 miles. Rocky limestone terrain. Prairie + Painted Bunting + Barred Owl + Live Oak Loop is the popular long route.</div>
+      <div class="hike-why">Best nearby distance option. String all 13 miles together for a proper day.</div>
+      <div><span class="hike-tag distance">Long Distance</span><span class="hike-tag terrain">Rocky Terrain</span></div>
+    </div>
+
+    <div class="hike-card tier1">
+      <div class="hike-name">Government Canyon SNA</div>
+      <div class="hike-meta"><span>~45 min south</span><span>Up to 12.3 mi</span><span>1,079 ft gain</span><span>$6</span></div>
+      <div class="hike-desc">(See San Antonio listing above.) The best elevation and distance within 45 min of NB. Mango should make this his regular weekend hike.</div>
+      <div class="hike-why">Worth the drive. Best elevation training Mango can get without going to Bandera.</div>
+      <div><span class="hike-tag elevation">Elevation</span><span class="hike-tag distance">Long Distance</span><span class="hike-tag terrain">Rocky Terrain</span></div>
+    </div>
+
+    <div class="hike-card tier1">
+      <div class="hike-name">Hill Country SNA</div>
+      <div class="hike-meta"><span>~50 min west (Bandera)</span><span>8+ mi loops</span><span>1,868 ft summit</span><span>$6</span></div>
+      <div class="hike-desc">(See San Antonio listing above.) Mango's best option for real elevation — same hills Sharky's training on.</div>
+      <div class="hike-why">Real hills, real distance. Mango should coordinate weekend trips with Sharky here.</div>
+      <div><span class="hike-tag elevation">Elevation</span><span class="hike-tag terrain">Rocky Terrain</span></div>
+    </div>
+
+    <div class="hike-card tier2">
+      <div class="hike-name">Canyon Park — Canyon Lake</div>
+      <div class="hike-meta"><span>~20 min north</span><span>7.6 mi rocky trail</span><span>Some elevation</span></div>
+      <div class="hike-desc">Rocky peninsula trail around Canyon Lake. Good mid-distance option close to home. Popular with mountain bikers.</div>
+      <div class="hike-why">Closest decent rocky terrain. Decent for a quick training session.</div>
+      <div><span class="hike-tag terrain">Rocky Terrain</span></div>
+    </div>
+
+    <div class="hike-card tier2">
+      <div class="hike-name">Panther Canyon Nature Trail</div>
+      <div class="hike-meta"><span>In NB (Landa Park)</span><span>1.3 mi</span><span>167 ft gain</span><span>Free</span></div>
+      <div class="hike-desc">The most elevation in NB proper — which tells you something. Short but doable in laps for hill reps.</div>
+      <div class="hike-why">Best NB has to offer in town. Do laps with a loaded pack for a workout.</div>
+      <div><span class="hike-tag elevation">Elevation</span></div>
+    </div>
+
+    <div class="hike-card tier3">
+      <div class="hike-name">NB River Trails / Landa Park <span class="tier-badge distance">Endurance</span></div>
+      <div class="hike-meta"><span>In town</span><span>8+ mi</span><span>Flat</span><span>Free</span></div>
+      <div class="hike-desc">Flat, easy river trails. Not going to build hill fitness but good for sustained distance walking and boot break-in.</div>
+      <div class="hike-why">Load the pack, do 10+ miles, break in those boots.</div>
+      <div><span class="hike-tag distance">Long Distance</span></div>
+    </div>
+    </div><!-- end data-region nb -->
+
+    <div class="region-header">📋 Training Plan</div>
+
+    <div class="training-plan">
+      <div class="training-footer"><strong>Key things you can't train for in Texas:</strong> boggy ground, wet rock, stream crossings, and 7 consecutive days. For those, load your pack to 15–20 lbs and do long flat walks — that teaches you more about your boots and pack than any hill session. <strong>Break in your boots NOW.</strong> 8–12 weeks of active use before departure.</div>
+    </div>
+
+  </div>
+
   <div id="tips" class="panel">
 
     <div class="section-label">Boots — when to buy &amp; break in</div>
@@ -339,8 +551,16 @@
       <div class="tip-text">Waterproof (Gore-Tex or equivalent, not just water-resistant — the distinction matters enormously in October Highland bog). Ankle support. A genuine hiking boot, not a trail runner. Pair with merino wool socks; use the same socks during break-in as you'll wear on the trail.</div>
     </div>
     <div class="tip-card">
+      <div class="tip-label">Alternative: trail running shoes</div>
+      <div class="tip-text">Sharky's colleague Chris Newton completed the WHW in breathable trail runners with a rock plate and preferred them to boots. His reasoning: only some sections are rocky enough to need ankle support, your feet will get wet regardless (from sweat, rain, and streams), and trail runners dry out fast where waterproof boots stay soggy. Mac's still recommends waterproof boots for October conditions. <strong>Both approaches work</strong> — the right call depends on your feet, pack weight, and comfort with rocky terrain. If you go the trail runner route, bring extra wool socks and prioritize a rock plate for underfoot protection.</div>
+    </div>
+    <div class="tip-card">
       <div class="tip-label">October conditions</div>
       <div class="tip-text">Rain and mud are near-certain. Rannoch Moor on Day 5 is a legitimate bog. Waterproofness is not optional — if your boots get wet inside, you'll have blisters within hours. Gaiters help too.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">Your feet will get wet either way</div>
+      <div class="tip-text">Between sweat, rain, and stream crossings, wet feet on the WHW are basically a given. Chris Newton's advice: bring plenty of merino wool socks and change into dry ones mid-day if needed. (He used Smartwool and stayed warm and blister-free the whole trip.) The Scottish tap water is excellent — every hotel and outside spigot he tried tasted better than filtered water at home, so don't overthink water treatment.</div>
     </div>
 
     <div class="section-label">Training</div>
@@ -353,8 +573,8 @@
       <div class="tip-text"><strong>Now–June:</strong> 5–8 miles, 3x/week. <strong>July:</strong> 10–12 miles long day. <strong>August:</strong> 15–18 miles long day + 2–3 day back-to-back hike. Your hardest day on the itinerary is 18.5 miles (Day 5) — you want to have exceeded that in training before you leave.</div>
     </div>
     <div class="tip-card">
-      <div class="tip-label">San Antonio is flat — address that</div>
-      <div class="tip-text">The WHW has ~3,500m total elevation gain. Actively seek out hills in training, or supplement with squats, lunges, calf raises, and step-ups. The climbs (Conic Hill, Devil's Staircase, Mamore Ridge) will bite if your legs aren't prepared for ascent and descent.</div>
+      <div class="tip-label">Most of us are training flat — address that</div>
+      <div class="tip-text">The WHW has ~3,500m total elevation gain. Only Ross has real mountains nearby — the rest of us need to actively seek out hills in training, or supplement with squats, lunges, calf raises, and step-ups. The climbs (Conic Hill, Devil's Staircase, Mamore Ridge) will bite if your legs aren't prepared for ascent and descent. See the Training tab for location-specific hikes.</div>
     </div>
     <div class="tip-card">
       <div class="tip-label">Train in bad weather</div>
@@ -385,6 +605,60 @@
     <div class="tip-card">
       <div class="tip-label">Offline maps are essential</div>
       <div class="tip-text">Download the Mac's Adventure app with offline maps before you leave. Mobile signal in the Highlands is patchy and unreliable. Don't rely on data for navigation mid-trail.</div>
+    </div>
+
+    <div class="section-label">From the trail — colleague tips</div>
+    <div class="tip-card">
+      <div class="tip-label">Day pack: less is more</div>
+      <div class="tip-text">Minimize day pack weight — it feels heavier every mile. Chris Newton overpacked with first aid kit, backup battery, water filter, etc. and never used any of it. Stick to: extra socks, layers, rain gear, snacks, water, blister kit. Hotels often have a water spigot for refilling, so you don't need to carry a full day's supply.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">Leave room in your transferred bag</div>
+      <div class="tip-text">Chris Newton's tip: leave a little extra space in your main luggage (the one AMS transfers between stops). If you decide mid-hike that you don't need something in your day pack — a layer, a battery pack, whatever — you can offload it into your main bag that evening and not carry it the next day. A packed-tight transfer bag leaves you no flexibility.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">Blister care: don't wait</div>
+      <div class="tip-text">Carry Compeed (not just moleskin) and don't ignore any hot spots or rubbing — deal with them immediately, not "at the next stop." A small rub becomes a trip-ending blister in hours on a thru-hike.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">Body Glide: use it everywhere</div>
+      <div class="tip-text">Unless you're used to hiking this much for this long, apply Body Glide wherever skin rubs skin — especially the groin. This matters even with good clothing. They make it for feet too. If you do get a raw spot, clean it well and apply Aquaphor at bedtime — Chris Newton went to sleep with terrible chafing and woke up completely healed. Epsom salt soak if your room has a tub is a superpower for recovery.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">Rain strategies</div>
+      <div class="tip-text">A good rain jacket + rain pants works double duty for wind and rain. Use a pack liner (a plastic bag inside your pack like a trash bag) or a pack cover. Oversized ponchos that cover you and your pack are also smart — and double as privacy for trail bathroom breaks. Bring a small clothesline to string across your room at night; some places have drying rooms but some don't.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">Midges</div>
+      <div class="tip-text">October is late enough that midges shouldn't be a major issue, but bring a headnet rated for midges (not just mosquitoes) — look for "ultra-fine" mesh. Bug spray is available at most trail stops if they turn out to be bad. We may not see them at all in October, but better to have the net and not need it.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">Walking poles: non-negotiable?</div>
+      <div class="tip-text">Chris Newton says trekking poles were non-negotiable for him — he would not do the WHW without them. Mac's recommends them as optional but strongly encouraged. They reduce knee strain on descents (Devil's Staircase, Mamore Ridge), help with stream crossings, and save your legs over a full week. Note: you can only pack poles in checked luggage, not carry-on.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">Dinner reservations matter</div>
+      <div class="tip-text">Some trail towns have very few dining options. Plan ahead and book dinner at your overnight stop when you can — don't assume you'll find a table. This is especially important in the smaller villages like Rowardennan and Kinlochleven.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">Packed lunches from your B&B</div>
+      <div class="tip-text">Most hotels and B&Bs will make you a packed lunch if you ask — sandwiches, chips, fruit, a drink, sometimes a chocolate bar. Ask reception before 6–7pm the night before. This saves carrying a day's worth of food and is often better than what you'd find on trail.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">Electrolytes every evening</div>
+      <div class="tip-text">Chris Newton recommends electrolyte packets at the end of each day's hike. He believes it made a real difference in reducing cramps and dehydration headaches. Lightweight, easy to pack, easy to overlook — but worth it on a multi-day effort.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">Carry small bills for honesty boxes</div>
+      <div class="tip-text">You'll encounter random honesty boxes and small cafes along the trail. Having a little extra cash in small denominations (£1, £5) is handy for these. Some stops only take cash.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">The community is the best part</div>
+      <div class="tip-text">Chris Newton didn't expect this, but the WHW is a shared experience with the people you end up hiking near every day. Passing the same people on trail, sharing a pint at the end of the day, everyone arriving in each new town — it feels like a pilgrimage. Make sure your group is on the same page with gear and pacing so no one has to miss a day.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">Customs: wash your hiking shoes before flying home</div>
+      <div class="tip-text">Scotland is farmland — you'll be walking through fields and past livestock. When you fill out the customs declaration ("Have you been on a farm or near farm animals?"), the honest answer is yes. Chris Newton answered honestly but hadn't washed his boots and got sent to secondary screening. Wash your hiking shoes before packing them for the return flight so you can truthfully say yes without the extra hassle.</div>
     </div>
 
     <div class="section-label">Mac's Adventure resources</div>
@@ -493,23 +767,35 @@ const HIKER_KEY = 'whw_hiker';
 // State: allStates[hikerName][phaseIdx][taskIdx] = 0|1|2
 let currentHiker = null;
 let allStates    = {};
+let isGuest      = false;
 
 // ── Hiker picker ──────────────────────────────────────────────────────────────
 async function selectHiker(name) {
   currentHiker = name;
+  isGuest = (name === 'Guest');
   localStorage.setItem(HIKER_KEY, name);
   document.getElementById('picker-overlay').style.display = 'none';
   document.getElementById('hiker-bar').style.display      = 'flex';
   document.getElementById('hiker-name-display').textContent = name;
-  document.querySelectorAll('.day-notes').forEach(ta => ta.disabled = false);
-  await loadAllStates();
-  subscribeToChanges();
+  document.querySelectorAll('.day-notes').forEach(ta => ta.disabled = isGuest);
+  document.querySelectorAll('.day-notes').forEach(ta => {
+    if (isGuest) ta.classList.add('guest-view');
+    else ta.classList.remove('guest-view');
+  });
+  if (!isGuest) {
+    await loadAllStates();
+    subscribeToChanges();
+  } else {
+    await loadAllStates();
+  }
   renderChecklist();
+  sortTrainingRegions();
 }
 
 function changeHiker() {
   localStorage.removeItem(HIKER_KEY);
   currentHiker = null;
+  isGuest = false;
   document.querySelectorAll('.day-notes').forEach(ta => ta.disabled = true);
   document.getElementById('hiker-bar').style.display    = 'none';
   document.getElementById('picker-overlay').style.display = 'flex';
@@ -670,6 +956,37 @@ function renderChecklist() {
     root.innerHTML = '<div class="cl-msg">Select your name above to view the checklist.</div>';
     return;
   }
+  if (isGuest) {
+    // Show full checklist as read-only — no hiker column highlighted, no click
+    root.innerHTML = '';
+    PHASES.forEach((phase, pi) => {
+      const block = document.createElement('div');
+      block.className = 'phase-block';
+      let html = `<div class="phase-header">${phase.label}</div>`;
+      html += `<div class="col-row"><span class="col-name">Task</span>`;
+      NAMES.forEach(n => {
+        html += `<span class="col-name">${n}</span>`;
+      });
+      html += `</div>`;
+      phase.tasks.forEach((task, ti) => {
+        html += `<div class="task-row"><span class="task-text">${task}</span>`;
+        NAMES.forEach((name, ni) => {
+          const s = getS(pi, ti, ni);
+          html += `<span class="check-btn theirs">${icon(s)}</span>`;
+        });
+        html += `</div>`;
+      });
+      block.innerHTML = html;
+      root.appendChild(block);
+    });
+    // Add guest hint
+    const hint = document.createElement('div');
+    hint.className = 'checklist-hint';
+    hint.style.marginTop = '0.75rem';
+    hint.innerHTML = 'You\'re viewing as a guest. \u003ca href="#" onclick="changeHiker();return false" style="color:var(--loch)"\u003ePick a hiker name\u003c/a\u003e to track your own progress.';
+    root.appendChild(hint);
+    return;
+  }
   const myNi = NAMES.indexOf(currentHiker);
   root.innerHTML = '';
 
@@ -714,6 +1031,36 @@ function switchTab(id, btn) {
   btn.classList.add('active');
   document.getElementById(id).classList.add('active');
   if (id === 'checklist') renderChecklist();
+  if (id === 'training') sortTrainingRegions();
+}
+
+// ── Training region sort ─────────────────────────────────────────────────────
+const HIKER_REGION = { Sharky: 'sa', Paco: 'la', Mango: 'nb', Madness: 'sa' };
+
+function sortTrainingRegions() {
+  const container = document.getElementById('training');
+  if (!container) return;
+  const regions = Array.from(container.querySelectorAll('[data-region]'));
+  if (!regions.length) return;
+  const myRegion = HIKER_REGION[currentHiker] || null;
+  // Remove existing badges
+  container.querySelectorAll('.your-region-badge').forEach(b => b.remove());
+  // Add badge and sort
+  regions.forEach(r => {
+    const header = r.querySelector('.region-header');
+    if (r.dataset.region === myRegion && header) {
+      const badge = document.createElement('span');
+      badge.className = 'your-region-badge';
+      badge.textContent = 'Your region';
+      header.appendChild(badge);
+    }
+  });
+  regions.sort((a, b) => {
+    if (a.dataset.region === myRegion) return -1;
+    if (b.dataset.region === myRegion) return 1;
+    return 0;
+  });
+  regions.forEach(r => container.appendChild(r));
 }
 
 // ── Checklist data ────────────────────────────────────────────────────────────
@@ -734,7 +1081,7 @@ const PHASES = [
     'Buy merino wool hiking socks (3+ pairs)',
     'Buy waterproof jacket & waterproof trousers',
     'Source a 20–25L daypack',
-    'Consider trekking poles — start practicing if so',
+    'Consider trekking poles — many veterans swear by them (checked luggage only)',
     'Book lodging for the night before (Milngavie or Glasgow)',
     'Book lodging for the night after (Fort William, 11 Oct)',
   ]},
@@ -760,6 +1107,8 @@ const PHASES = [
     'Buy headlamp with fresh batteries',
     'Buy sun hat & sunscreen',
     'Buy reusable water bottle or hydration system (2L)',
+    'Buy Body Glide (anti-chafe stick — for feet and body)',
+    'Buy small travel clothesline for drying gear at night',
     'Buy lightweight quick-dry towel',
     "Review Mac's Adventure Trip Information Pack",
     'Weigh main luggage bag (must be under 20 kg)',
@@ -772,12 +1121,15 @@ const PHASES = [
     'Final long confidence walk (12–15 miles)',
     'Pack and weigh main bag (under 20 kg)',
     'Pack and test daypack (water, snacks, rain gear, layers, first aid)',
+    'Electrolyte packets for end-of-day recovery',
     'Buy midge repellent (DEET-based)',
+    'Buy ultra-fine midge headnet (not just mosquito mesh)',
     'Buy waterproof liner or cover for daypack',
+    'Buy Aquaphor or similar healing ointment (for overnight chafing recovery)',
     "Pre-load Mac's Adventure app with offline maps",
     'Download OS Maps or similar as backup navigation',
     "Follow up with Mac's on Glencoe shuttle confirmation",
-    'Arrange San Antonio airport transport (departure)',
+    'Arrange departure airport transport',
     'Arrange Glasgow airport → Milngavie / city transport',
     "Confirm all Mac's Adventure bookings",
     'Pack sufficient prescription medications for full trip',
@@ -787,9 +1139,11 @@ const PHASES = [
     'Pre-tape known blister hotspots on feet',
     'Charge all devices and power banks',
     'Confirm all accommodations and booking references',
+    'Ask each B&B about packed lunches for the next day (order by 6–7pm night before)',
     'Check weather forecast for first few trail days',
     'Check in for flights online',
     'Withdraw GBP cash for rural pubs / small B&Bs',
+    'Get small GBP bills (£1, £5) for trail honesty boxes and cash-only stops',
     'Book Fort William dinner restaurant if not done yet (2+ days advance)',
     'Book return transport from Fort William (train to Glasgow ~2hrs)',
     "Look up Glengoyne Distillery hours — it's on route Day 1!",
@@ -799,6 +1153,7 @@ const PHASES = [
     'Insurance policy accessible (screenshot or printout)',
     "Mac's booking confirmation accessible (BOK00109962)",
     'Wear or carry-on hiking boots (never check them)',
+    'Wash hiking shoes before return flight to answer agriculture questions honestly',
     'Power bank charged and in carry-on',
   ]},
 ];
@@ -809,7 +1164,7 @@ const PHASES = [
   await loadNotes();
   subscribeToNoteChanges();
   const stored = localStorage.getItem(HIKER_KEY);
-  if (stored && NAMES.includes(stored)) {
+  if (stored && [...NAMES, 'Guest'].includes(stored)) {
     await selectHiker(stored);
   } else {
     document.getElementById('picker-overlay').style.display = 'flex';
