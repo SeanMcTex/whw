@@ -160,6 +160,7 @@
   .day-notes { width: 100%; min-height: 56px; border: 1px solid var(--border); border-radius: 6px; padding: 0.45rem 0.6rem; font-family: 'DM Sans', sans-serif; font-size: 0.8rem; color: var(--text); resize: vertical; background: var(--mist); line-height: 1.5; }
   .day-notes:focus { outline: none; border-color: var(--loch); background: white; }
   .day-notes:disabled { opacity: 0.55; cursor: not-allowed; }
+  .day-notes.guest-view { opacity: 0.85; }
   .notes-meta { font-size: 0.67rem; color: var(--text-muted); margin-top: 3px; min-height: 1em; }
 
   @keyframes blink { 0%,100% { opacity: 0.35; } 50% { opacity: 1; } }
@@ -177,13 +178,14 @@
 <div class="picker-overlay" id="picker-overlay">
   <div class="picker-modal">
     <h2>Who are you?</h2>
-    <p>Your checklist syncs with the group — everyone sees each other's progress in real time.</p>
+    <p>Pick your name to track your checklist. Or <strong>just browse as a Guest</strong> — no tracking, just looking.</p>
     <div class="picker-grid">
       <button class="picker-btn" onclick="selectHiker('Sharky')">Sharky</button>
       <button class="picker-btn" onclick="selectHiker('Paco')">Paco</button>
       <button class="picker-btn" onclick="selectHiker('Mango')">Mango</button>
       <button class="picker-btn" onclick="selectHiker('Madness')">Madness</button>
     </div>
+    <button class="picker-btn" style="margin-top:1rem;width:100%;background:var(--mist);font-size:0.85rem;" onclick="selectHiker('Guest')">Just looking — Guest</button>
   </div>
 </div>
 
@@ -529,12 +531,6 @@
     <div class="region-sub">Suggested weekly plan for all three vaqueros — adjust to fitness level</div>
 
     <div class="training-plan">
-      <div class="training-plan-header">Weekly Schedule</div>
-      <div class="training-row"><span class="week">Weekly</span><span class="workout">Greenway/river walk, 8–12 mi</span><span class="purpose">Distance base, boot break-in</span></div>
-      <div class="training-row"><span class="week">Weekly</span><span class="workout">Hill session (local park)</span><span class="purpose">Elevation, rocky terrain</span></div>
-      <div class="training-row"><span class="week">Weekend</span><span class="workout">Long day hike (10–14 mi)</span><span class="purpose">Endurance + pack testing</span></div>
-      <div class="training-row"><span class="week">Monthly</span><span class="workout">Big elevation day trip</span><span class="purpose">Hill fitness, group hike</span></div>
-      <div class="training-row"><span class="week">Late Sep</span><span class="workout">Back-to-back: 12+12 mi</span><span class="purpose">Multi-day endurance sim</span></div>
       <div class="training-footer"><strong>Key things you can't train for in Texas:</strong> boggy ground, wet rock, stream crossings, and 7 consecutive days. For those, load your pack to 15–20 lbs and do long flat walks — that teaches you more about your boots and pack than any hill session. <strong>Break in your boots NOW.</strong> 8–12 weeks of active use before departure.</div>
     </div>
 
@@ -772,17 +768,25 @@ const HIKER_KEY = 'whw_hiker';
 // State: allStates[hikerName][phaseIdx][taskIdx] = 0|1|2
 let currentHiker = null;
 let allStates    = {};
+let isGuest      = false;
 
 // ── Hiker picker ──────────────────────────────────────────────────────────────
 async function selectHiker(name) {
   currentHiker = name;
+  isGuest = (name === 'Guest');
   localStorage.setItem(HIKER_KEY, name);
   document.getElementById('picker-overlay').style.display = 'none';
   document.getElementById('hiker-bar').style.display      = 'flex';
   document.getElementById('hiker-name-display').textContent = name;
-  document.querySelectorAll('.day-notes').forEach(ta => ta.disabled = false);
-  await loadAllStates();
-  subscribeToChanges();
+  document.querySelectorAll('.day-notes').forEach(ta => ta.disabled = isGuest);
+  document.querySelectorAll('.day-notes').forEach(ta => {
+    if (isGuest) ta.classList.add('guest-view');
+    else ta.classList.remove('guest-view');
+  });
+  if (!isGuest) {
+    await loadAllStates();
+    subscribeToChanges();
+  }
   renderChecklist();
   sortTrainingRegions();
 }
@@ -790,6 +794,7 @@ async function selectHiker(name) {
 function changeHiker() {
   localStorage.removeItem(HIKER_KEY);
   currentHiker = null;
+  isGuest = false;
   document.querySelectorAll('.day-notes').forEach(ta => ta.disabled = true);
   document.getElementById('hiker-bar').style.display    = 'none';
   document.getElementById('picker-overlay').style.display = 'flex';
@@ -948,6 +953,10 @@ function renderChecklist() {
   const root = document.getElementById('cl-root');
   if (!currentHiker) {
     root.innerHTML = '<div class="cl-msg">Select your name above to view the checklist.</div>';
+    return;
+  }
+  if (isGuest) {
+    root.innerHTML = '<div class="cl-msg">You&#39;re viewing as a guest. <a href="#" onclick="changeHiker();return false" style="color:var(--loch)">Pick a hiker name</a> to track your own progress.</div>';
     return;
   }
   const myNi = NAMES.indexOf(currentHiker);
@@ -1127,7 +1136,7 @@ const PHASES = [
   await loadNotes();
   subscribeToNoteChanges();
   const stored = localStorage.getItem(HIKER_KEY);
-  if (stored && NAMES.includes(stored)) {
+  if (stored && [...NAMES, 'Guest'].includes(stored)) {
     await selectHiker(stored);
   } else {
     document.getElementById('picker-overlay').style.display = 'flex';
