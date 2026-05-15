@@ -785,6 +785,8 @@ async function selectHiker(name) {
   if (!isGuest) {
     await loadAllStates();
     subscribeToChanges();
+  } else {
+    await loadAllStates();
   }
   renderChecklist();
   sortTrainingRegions();
@@ -955,7 +957,34 @@ function renderChecklist() {
     return;
   }
   if (isGuest) {
-    root.innerHTML = '<div class="cl-msg">You&#39;re viewing as a guest. <a href="#" onclick="changeHiker();return false" style="color:var(--loch)">Pick a hiker name</a> to track your own progress.</div>';
+    // Show full checklist as read-only — no hiker column highlighted, no click
+    root.innerHTML = '';
+    PHASES.forEach((phase, pi) => {
+      const block = document.createElement('div');
+      block.className = 'phase-block';
+      let html = `<div class="phase-header">${phase.label}</div>`;
+      html += `<div class="col-row"><span class="col-name">Task</span>`;
+      NAMES.forEach(n => {
+        html += `<span class="col-name">${n}</span>`;
+      });
+      html += `</div>`;
+      phase.tasks.forEach((task, ti) => {
+        html += `<div class="task-row"><span class="task-text">${task}</span>`;
+        NAMES.forEach((name, ni) => {
+          const s = getS(pi, ti, ni);
+          html += `<span class="check-btn theirs">${icon(s)}</span>`;
+        });
+        html += `</div>`;
+      });
+      block.innerHTML = html;
+      root.appendChild(block);
+    });
+    // Add guest hint
+    const hint = document.createElement('div');
+    hint.className = 'checklist-hint';
+    hint.style.marginTop = '0.75rem';
+    hint.innerHTML = 'You\'re viewing as a guest. \u003ca href="#" onclick="changeHiker();return false" style="color:var(--loch)"\u003ePick a hiker name\u003c/a\u003e to track your own progress.';
+    root.appendChild(hint);
     return;
   }
   const myNi = NAMES.indexOf(currentHiker);
