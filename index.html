@@ -661,6 +661,32 @@
       <div class="tip-text">Scotland is farmland — you'll be walking through fields and past livestock. When you fill out the customs declaration ("Have you been on a farm or near farm animals?"), the honest answer is yes. Chris Newton answered honestly but hadn't washed his boots and got sent to secondary screening. Wash your hiking shoes before packing them for the return flight so you can truthfully say yes without the extra hassle.</div>
     </div>
 
+    <div class="section-label" id="travel-insurance">Travel insurance</div>
+    <div class="tip-card">
+      <div class="tip-label">Required by Mac's Adventure</div>
+      <div class="tip-text">It is a <strong>condition of booking</strong> that you have suitable travel insurance covering the activity, emergency evacuation, and hospital care. Mac's recommends <a href="https://www.macsadventure.com/about-us/contact-booking/travel-insurance/" target="_blank">Campbell Irvine Ltd</a> — however, their policies are <strong>only available to UK residents</strong> (3+ months residency required), so they won't work for us.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">What your policy must cover</div>
+      <div class="tip-text"><strong>Emergency medical</strong> — hospital care in Scotland. <strong>Emergency evacuation</strong> — rescue off the trail (helicopter, ambulance). <strong>Repatriation</strong> — flying you home if medically necessary (can be $10K–$50K+). <strong>Trip cancellation/interruption</strong> — recovering your Mac's booking costs if you can't travel or continue. <strong>Baggage loss/delay</strong> — gear doesn't make it to Glasgow.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">WHW altitude — you're just hill-walking</div>
+      <div class="tip-text">The highest point on the WHW is Devil's Staircase at 550m (1,804 ft). Conic Hill is 358m. Most of the route is 50–400m. This is well under the 2,500m threshold where "trekking" coverage kicks in — any standard policy covering "hiking" or "walking" will include the WHW with no altitude add-on needed.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">Cigna (your regular health insurance)</div>
+      <div class="tip-text">Most Cigna plans have <strong>limited or no coverage outside the US</strong>. Even if emergency care abroad is covered, you'd pay out-of-network rates and file claims later. Cigna does <strong>not</strong> cover emergency evacuation, repatriation, trip cancellation, or baggage loss. Travel insurance is <strong>primary</strong> for anything that happens in Scotland — file with them first. Check with Cigna member services to confirm what (if any) international emergency coverage your plan includes, but you still need separate travel insurance regardless.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">Recommended: World Nomads</div>
+      <div class="tip-text">Best fit for US residents hiking the WHW. Explicitly covers 340+ adventure activities including hiking/trekking. Emergency evacuation and medical are standard. Two tiers: <strong>Explorer</strong> (basic) and <strong>Epic</strong> (expanded, includes cancel-for-any-reason upgrade at 75% reimbursement). Buy online anytime, even mid-trip. Available in all 50 states. <a href="https://www.worldnomads.com/usa/travel-insurance/activities/hiking-travel-insurance" target="_blank">World Nomads hiking coverage →</a></div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-label">Alternatives</div>
+      <div class="tip-text"><strong>Allianz OneTrip Prime</strong> — cheaper, US-only, A+ AM Best rating. Covers emergency medical and evacuation, but confirm by phone that hill-walking in Scotland is a covered activity (it should be, but adventure sports language can be ambiguous). <strong>Travel Guard</strong> (AIG) — US-only, adventure sports add-on available, strong claims reputation. <a href="https://www.squaremouth.com/plans/adventure-sports/trekking-hiking-insurance" target="_blank">Squaremouth</a> is a good comparison site for shopping multiple providers.</div>
+    </div>
+
     <div class="section-label">Mac's Adventure resources</div>
     <div class="tip-card">
       <div class="tip-label">Trail guide</div>
@@ -979,6 +1005,13 @@ function renderChecklist() {
       block.innerHTML = html;
       root.appendChild(block);
     });
+    // Make "See Tips →" references clickable (guest view)
+    root.querySelectorAll('.task-text').forEach(el => {
+      el.innerHTML = el.innerHTML.replace(
+        /See Tips → ([\w\s]+)/g,
+        'See Tips → <a href="#" onclick="switchTab(\'tips\',document.querySelector(\'[onclick*=tips]\'),\'$1\'.toLowerCase().replace(/\s/g,\'-\'));return false" style="color:var(--loch)">$1</a>'
+      );
+    });
     // Add guest hint
     const hint = document.createElement('div');
     hint.className = 'checklist-hint';
@@ -1022,16 +1055,24 @@ function renderChecklist() {
 
     root.appendChild(block);
   });
+  // Make "See Tips →" references clickable
+  root.querySelectorAll('.task-text').forEach(el => {
+    el.innerHTML = el.innerHTML.replace(
+      /See Tips → ([\w\s]+)/g,
+      'See Tips → <a href="#" onclick="switchTab(\'tips\',document.querySelector(\'[onclick*=tips]\'),\'$1\'.toLowerCase().replace(/\s/g,\'-\'));return false" style="color:var(--loch)">$1</a>'
+    );
+  });
 }
 
 // ── Tab switch ────────────────────────────────────────────────────────────────
-function switchTab(id, btn) {
+function switchTab(id, btn, anchor) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById(id).classList.add('active');
   if (id === 'checklist') renderChecklist();
   if (id === 'training') sortTrainingRegions();
+  if (anchor) setTimeout(() => document.getElementById(anchor)?.scrollIntoView({behavior:'smooth'}), 100);
 }
 
 // ── Training region sort ─────────────────────────────────────────────────────
@@ -1068,7 +1109,7 @@ const PHASES = [
   { label: 'ASAP / Now', tasks: [
     'Check passport expiry (valid 6+ months past 11 Oct 2026)',
     'Apply for / renew passport if needed',
-    "Purchase travel insurance (hiking + emergency evacuation) — required by Mac's",
+    "Purchase travel insurance (hiking + emergency evacuation) — required by Mac's  See Tips → Travel insurance",,
     'Book flights to Glasgow',
     'Buy hiking boots (waterproof, ankle support)',
     'Start base fitness: 3–5 mile walks 3×/week',
@@ -1150,7 +1191,7 @@ const PHASES = [
   ]},
   { label: 'Departure day', tasks: [
     'Passport in carry-on (not checked baggage)',
-    'Insurance policy accessible (screenshot or printout)',
+    'Insurance policy accessible (screenshot or printout)  See Tips → Travel insurance',
     "Mac's booking confirmation accessible (BOK00109962)",
     'Wear or carry-on hiking boots (never check them)',
     'Wash hiking shoes before return flight to answer agriculture questions honestly',
