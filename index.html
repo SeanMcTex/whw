@@ -1008,7 +1008,7 @@ function renderChecklist() {
     // Make "See Tips →" references clickable (guest view)
     root.querySelectorAll('.task-text').forEach(el => {
       el.innerHTML = el.innerHTML.replace(
-        /See Tips → ([\w\s]+)/g,
+        /See Tips → ([\w]+(?:\s[\w]+)*)/g,
         'See Tips → <a href="#" onclick="switchTab(\'tips\',document.querySelector(\'[onclick*=tips]\'),\'$1\'.toLowerCase().replace(/\s/g,\'-\'));return false" style="color:var(--loch)">$1</a>'
       );
     });
@@ -1058,7 +1058,7 @@ function renderChecklist() {
   // Make "See Tips →" references clickable
   root.querySelectorAll('.task-text').forEach(el => {
     el.innerHTML = el.innerHTML.replace(
-      /See Tips → ([\w\s]+)/g,
+      /See Tips → ([\w]+(?:\s[\w]+)*)/g,
       'See Tips → <a href="#" onclick="switchTab(\'tips\',document.querySelector(\'[onclick*=tips]\'),\'$1\'.toLowerCase().replace(/\s/g,\'-\'));return false" style="color:var(--loch)">$1</a>'
     );
   });
@@ -1109,7 +1109,7 @@ const PHASES = [
   { label: 'ASAP / Now', tasks: [
     'Check passport expiry (valid 6+ months past 11 Oct 2026)',
     'Apply for / renew passport if needed',
-    "Purchase travel insurance (hiking + emergency evacuation) — required by Mac's  See Tips → Travel insurance",,
+    "Purchase travel insurance (hiking + emergency evacuation) — required by Mac's  See Tips → Travel insurance",
     'Book flights to Glasgow',
     'Buy hiking boots (waterproof, ankle support)',
     'Start base fitness: 3–5 mile walks 3×/week',
