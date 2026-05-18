@@ -1005,11 +1005,15 @@ function renderChecklist() {
       block.innerHTML = html;
       root.appendChild(block);
     });
-    // Make "See Tips →" references clickable (guest view)
+    // Make "See Tips →" and "See Tips." references clickable (guest view)
     root.querySelectorAll('.task-text').forEach(el => {
       el.innerHTML = el.innerHTML.replace(
         /See Tips → ([\w]+(?:\s[\w]+)*)/g,
         'See Tips → <a href="#" onclick="return goToTipsSection(\'$1\'.toLowerCase().replace(/\s/g,\'-\'))" style="color:var(--loch)">$1</a>'
+      );
+      el.innerHTML = el.innerHTML.replace(
+        /See (Tips)\./g,
+        'See <a href="#" onclick="return goToTips()" style="color:var(--loch)">$1</a>.'
       );
     });
     // Add guest hint
@@ -1055,11 +1059,15 @@ function renderChecklist() {
 
     root.appendChild(block);
   });
-  // Make "See Tips →" references clickable
+  // Make "See Tips →" and "See Tips." references clickable
   root.querySelectorAll('.task-text').forEach(el => {
     el.innerHTML = el.innerHTML.replace(
       /See Tips → ([\w]+(?:\s[\w]+)*)/g,
       'See Tips → <a href="#" onclick="return goToTipsSection(\'$1\'.toLowerCase().replace(/\s/g,\'-\'))" style="color:var(--loch)">$1</a>'
+    );
+    el.innerHTML = el.innerHTML.replace(
+      /See (Tips)\./g,
+      'See <a href="#" onclick="return goToTips()" style="color:var(--loch)">$1</a>.'
     );
   });
 }
@@ -1078,6 +1086,12 @@ function switchTab(id, btn, anchor) {
 function goToTipsSection(anchor) {
   const tipsBtn = Array.from(document.querySelectorAll('.tab')).find(t => t.textContent.trim() === 'Tips');
   if (tipsBtn) switchTab('tips', tipsBtn, anchor);
+  return false;
+}
+
+function goToTips() {
+  const tipsBtn = Array.from(document.querySelectorAll('.tab')).find(t => t.textContent.trim() === 'Tips');
+  if (tipsBtn) switchTab('tips', tipsBtn);
   return false;
 }
 
@@ -1115,7 +1129,7 @@ const PHASES = [
   { label: 'ASAP / Now', tasks: [
     'Check passport expiry (valid 6+ months past 11 Oct 2026)',
     'Apply for / renew passport if needed',
-    "Purchase travel insurance (hiking + emergency evacuation) — required by Mac's  See Tips → Travel insurance",
+    "Purchase travel insurance (hiking + emergency evacuation) — required by Mac's. See Tips.",
     'Book flights to Glasgow',
     'Buy hiking boots (waterproof, ankle support)',
     'Start base fitness: 3–5 mile walks 3×/week',
@@ -1197,7 +1211,7 @@ const PHASES = [
   ]},
   { label: 'Departure day', tasks: [
     'Passport in carry-on (not checked baggage)',
-    'Insurance policy accessible (screenshot or printout)  See Tips → Travel insurance',
+    'Insurance policy accessible (screenshot or printout). See Tips.',
     "Mac's booking confirmation accessible (BOK00109962)",
     'Wear or carry-on hiking boots (never check them)',
     'Wash hiking shoes before return flight to answer agriculture questions honestly',
