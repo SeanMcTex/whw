@@ -73,6 +73,17 @@
   .booking-link-val a:hover { text-decoration: underline; }
   .booking-link-empty { color: var(--text-muted); font-style: italic; font-size: 0.78rem; }
 
+  /* Weather card */
+  .weather-card { background: white; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 0.75rem; overflow: hidden; }
+  .weather-header { background: linear-gradient(135deg, #4A7C8A 0%, #2D5A6B 100%); color: white; padding: 0.6rem 1rem; font-family: 'Playfair Display', serif; font-size: 0.9rem; }
+  .weather-body { padding: 0.85rem 1rem; }
+  .weather-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 0.75rem; }
+  .weather-stat { text-align: center; padding: 0.4rem 0.25rem; background: #F0F6F8; border-radius: 8px; }
+  .weather-stat-val { display: block; font-size: 1rem; font-weight: 600; color: var(--highland); }
+  .weather-stat-label { display: block; font-size: 0.68rem; color: var(--text-muted); margin-top: 2px; }
+  .weather-details p { margin: 0 0 0.5rem 0; font-size: 0.8rem; line-height: 1.5; color: var(--text); }
+  .weather-details p:last-child { margin-bottom: 0; }
+
   /* Day cards */
   .day-card { background: white; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 0.75rem; overflow: hidden; }
   .day-header { background: var(--highland); color: white; padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap; }
@@ -256,6 +267,47 @@
       <div class="booking-link-row">
         <span class="booking-link-name">Madness</span>
         <span class="booking-link-val"><span class="booking-link-empty">Link coming soon</span></span>
+      </div>
+    </div>
+
+    <div class="weather-card">
+      <div class="weather-header">☔ October Weather & Scenery</div>
+      <div class="weather-body">
+        <div class="weather-grid">
+          <div class="weather-stat">
+            <span class="weather-stat-val">198mm</span>
+            <span class="weather-stat-label">Rain (Fort William)</span>
+          </div>
+          <div class="weather-stat">
+            <span class="weather-stat-val">23–25</span>
+            <span class="weather-stat-label">Rain days / month</span>
+          </div>
+          <div class="weather-stat">
+            <span class="weather-stat-val">48–59°F</span>
+            <span class="weather-stat-label">Daytime highs</span>
+          </div>
+          <div class="weather-stat">
+            <span class="weather-stat-val">37–45°F</span>
+            <span class="weather-stat-label">Nighttime lows</span>
+          </div>
+          <div class="weather-stat">
+            <span class="weather-stat-val">10–10.5hrs</span>
+            <span class="weather-stat-label">Daylight</span>
+          </div>
+          <div class="weather-stat">
+            <span class="weather-stat-val">15–40+mph</span>
+            <span class="weather-stat-label">Wind (glens→ridges)</span>
+          </div>
+        </div>
+        <div class="weather-details">
+          <p><strong>Rain:</strong> Scotland's wettest region in its wettest month. Expect drizzle, showers, and sudden soaking bursts with teasing dry windows. Rain gear isn't backup — it's your primary shelter. Plan on wearing your jacket 4–6 hrs/day.</p>
+          <p><strong>Wind:</strong> 15–25 mph in the glens, 30–40+ mph on exposed ridges (Devil's Staircase, Conic Hill). Horizontal rain is normal. A stiff, adjustable storm hood is non-negotiable.</p>
+          <p><strong>Trail when wet:</strong> Everything gets slippery — stone, roots, bog boards, grass. Loch Lomond's north shore and Rannoch Moor are the soggiest sections. Wet-grip boots (Vibram MegaGrip or Salomon Contagrip) matter enormously.</p>
+          <p><strong>Temps:</strong> Comfortable while moving, but you'll cycle through layers constantly — sweating on climbs, chilled on ridgelines, sometimes within the same hour. Subtract 3–5°F for wind chill on exposed high ground.</p>
+          <p><strong>Daylight:</strong> Sunrise ~7:45, sunset ~6:15. Tight window — start by 8:30–9:00am to finish before dark. Carry a headlamp.</p>
+          <p><strong>Midges:</strong> Basically zero in October. One of the best reasons to go then.</p>
+          <p><strong>Scenery:</strong> <em>Stunning.</em> The Highlands turn gold, amber, and deep red — birch along Loch Lomond, bronze heather, rusty bracken against dark lochs and grey rock. On clear days (expect 6–8/month), panoramic views from Devil's Staircase and Conic Hill are incredible. On misty days, waterfalls swell, fog drapes through glens — atmospheric and gorgeous in a way July can't match. Some days you'll be in cloud; that's just Scotland.</p>
+        </div>
       </div>
     </div>
 
