@@ -113,7 +113,14 @@
   .check-btn { text-align: center; font-size: 1rem; padding: 4px; border-radius: 6px; user-select: none; -webkit-tap-highlight-color: transparent; }
   .check-btn.mine { cursor: pointer; transition: background 0.1s; }
   .check-btn.mine:hover { background: var(--mist); }
-  .check-btn.theirs { cursor: default; opacity: 0.5; }
+  .check-btn.theirs { cursor: pointer; opacity: 0.5; transition: opacity 0.15s; }
+  .check-btn.theirs:hover { opacity: 0.75; }
+  .check-btn.theirs.long-pressing { opacity: 0.9; background: var(--mist); }
+  .cl-toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); background: var(--highland); color: white; padding: 0.6rem 1.2rem; border-radius: 10px; font-size: 0.82rem; z-index: 1000; box-shadow: 0 4px 20px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 0.75rem; animation: toast-in 0.2s ease-out; }
+  .cl-toast.out { animation: toast-out 0.25s ease-in forwards; }
+
+  @keyframes toast-in { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+  @keyframes toast-out { from { opacity: 1; } to { opacity: 0; transform: translateX(-50%) translateY(10px); } }
   .check-btn.done { color: #2C7A50; }
   .check-btn.skip { color: #B85050; }
   .check-btn.empty { color: #CCC; }
@@ -438,7 +445,7 @@
 
   <!-- CHECKLIST -->
   <div id="checklist" class="panel active">
-    <div class="checklist-hint">Tap your column to cycle: <strong>✓</strong> done → <strong>✗</strong> skip → clear. All four hikers' progress is visible to everyone.</div>
+    <div class="checklist-hint">Tap your column to cycle: <strong>✓</strong> done → <strong>✗</strong> skip → clear. <strong>Long-press</strong> another hiker's cell to update theirs. All four hikers' progress is visible to everyone.</div>
     <div id="cl-root"></div>
   </div>
 
@@ -1082,9 +1089,9 @@ function getS(pi, ti, ni) {
   return allStates[NAMES[ni]]?.[pi]?.[ti] ?? 0;
 }
 
-function cycleS(pi, ti) {
+function cycleS(pi, ti, hikerOverride) {
   if (!currentHiker) return;
-  const h = currentHiker;
+  const h = hikerOverride || currentHiker;
   if (!allStates[h])     allStates[h]     = {};
   if (!allStates[h][pi]) allStates[h][pi] = {};
   const newVal = ((allStates[h][pi][ti] ?? 0) + 1) % 3;
@@ -1094,6 +1101,34 @@ function cycleS(pi, ti) {
     .upsert({ hiker: h, phase_idx: +pi, task_idx: +ti, state: newVal, updated_at: new Date().toISOString() })
     .then(({ error }) => setSyncDot(error ? 'err' : 'ok'))
     .catch(() => setSyncDot('err'));
+  return { hiker: h, newVal };
+}
+
+// ── Toast system ───────────────────────────────────────────────────────────
+let activeToast = null;
+let toastTimer = null;
+
+function showToast(text) {
+  if (activeToast) { activeToast.remove(); clearTimeout(toastTimer); activeToast = null; }
+  const el = document.createElement('div');
+  el.className = 'cl-toast';
+  el.textContent = text;
+  document.body.appendChild(el);
+  activeToast = el;
+  toastTimer = setTimeout(dismissToast, 2500);
+}
+
+function dismissToast() {
+  if (!activeToast) return;
+  activeToast.classList.add('out');
+  const el = activeToast;
+  setTimeout(() => el.remove(), 250);
+  activeToast = null;
+  clearTimeout(toastTimer);
+}
+
+function taskLabel(pi, ti) {
+  return PHASES[pi]?.tasks[ti] || 'item';
 }
 
 function icon(s) { return s === 1 ? '✓' : s === 2 ? '✗' : '·'; }
@@ -1173,9 +1208,56 @@ function renderChecklist() {
     });
     block.innerHTML = html;
 
-    // Attach click only to current hiker's cells
-    block.querySelectorAll(`.check-btn[data-ni="${myNi}"]`).forEach(el => {
-      el.addEventListener('click', function () {
+    // Attach interactions to ALL cells
+    block.querySelectorAll('.check-btn').forEach(el => {
+      let longPressTimer = null;
+      let isLongPress = false;
+
+      const startLongPress = (e) => {
+        const ni = +el.dataset.ni;
+        if (ni === myNi) return; // long-press only for other hikers
+        isLongPress = false;
+        longPressTimer = setTimeout(() => {
+          isLongPress = true;
+          el.classList.add('long-pressing');
+          const pi = +el.dataset.pi, ti = +el.dataset.ti;
+          const name = NAMES[ni];
+          const result = cycleS(pi, ti, name);
+          if (result) {
+            // Re-render the affected cell
+            const s = getS(pi, ti, ni);
+            el.textContent = icon(s);
+            el.className = cellCls(s, false);
+            el.classList.remove('long-pressing');
+            const label = taskLabel(pi, ti);
+            const stateWord = result.newVal === 1 ? 'done' : result.newVal === 2 ? 'skipped' : 'cleared';
+            showToast(`Marked "${label}" ${stateWord} for ${name}`);
+          }
+        }, 500);
+      };
+
+      const cancelLongPress = () => {
+        clearTimeout(longPressTimer);
+        longPressTimer = null;
+        el.classList.remove('long-pressing');
+      };
+
+      // Mouse events
+      el.addEventListener('mousedown', startLongPress);
+      el.addEventListener('mouseup', cancelLongPress);
+      el.addEventListener('mouseleave', cancelLongPress);
+
+      // Touch events
+      el.addEventListener('touchstart', startLongPress, { passive: true });
+      el.addEventListener('touchend', cancelLongPress);
+      el.addEventListener('touchcancel', cancelLongPress);
+      el.addEventListener('touchmove', cancelLongPress);
+
+      // Click: own cell toggles normally; other cells ignore short taps
+      el.addEventListener('click', function (e) {
+        if (isLongPress) { isLongPress = false; e.preventDefault(); return; }
+        const ni = +this.dataset.ni;
+        if (ni !== myNi) return; // short tap on others = no-op
         const pi = +this.dataset.pi, ti = +this.dataset.ti;
         cycleS(pi, ti);
         const s = getS(pi, ti, myNi);
