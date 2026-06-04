@@ -36,7 +36,7 @@ Current names: `Sharky`, `Paco`, `Mango`, `Madness`
 
 ### Day indices (`day_idx`)
 
-`day_notes` rows use `day_idx` 0–6, corresponding to the seven day cards in the Itinerary tab in order:
+`day_notes` rows use `day_idx` 0–7, corresponding to the eight day cards in the Itinerary tab in order:
 
 | idx | Day |
 |---|---|
@@ -47,6 +47,7 @@ Current names: `Sharky`, `Paco`, `Mango`, `Madness`
 | 4 | Tyndrum → Glencoe (8 Oct) |
 | 5 | Kingshouse → Kinlochleven (9 Oct) |
 | 6 | Kinlochleven → Fort William (10 Oct) |
+| 7 | Jacobite Steam Train: Fort William → Mallaig → Fort William (11 Oct) |
 
 **Do not reorder day cards.** Doing so mis-routes existing notes to the wrong days.
 

@@ -30,7 +30,7 @@ alter publication supabase_realtime add table public.checklist_state;
 -- ── Day notes ─────────────────────────────────────────────────────────────────
 
 create table public.day_notes (
-  day_idx    int         not null primary key check (day_idx between 0 and 6),
+  day_idx    int         not null primary key check (day_idx between 0 and 7),
   content    text        not null default '',
   updated_by text,
   updated_at timestamptz not null default now()
