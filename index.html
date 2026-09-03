@@ -612,6 +612,43 @@
     </div>
     </div><!-- end data-region la -->
 
+    <div data-region="atx">
+    <div class="region-header">🦇 Austin (Brack)</div>
+    <div class="region-sub">The Hill Country runs through town — the Greenbelt gives you rocks, River Place gives you stairs. Brack has no excuse.</div>
+
+    <div class="hike-card tier1">
+      <div class="hike-name">River Place Nature Trail <span class="tier-badge best">Best</span></div>
+      <div class="hike-meta"><span>NW Austin</span><span>~6 mi RT</span><span>~1,000 ft gain</span><span>$10/person</span></div>
+      <div class="hike-desc">Austin's vert king — 2,763 steps one way on the 3-mile section, nearly 1,000 ft of gain crammed into a 6-mile round trip. Steep, stair-heavy, and the closest thing to Highland terrain inside the city.</div>
+      <div class="hike-why">Do it with the loaded daypack. This is the workout that makes Day 2 of the WHW survivable.</div>
+      <div><span class="hike-tag elevation">Elevation</span><span class="hike-tag terrain">Rocky Terrain</span></div>
+    </div>
+
+    <div class="hike-card tier1">
+      <div class="hike-name">Barton Creek Greenbelt</div>
+      <div class="hike-meta"><span>Central, many entrances</span><span>12+ mi of trails</span><span>Rolling limestone</span><span>Free</span></div>
+      <div class="hike-desc">12+ miles of trail along the creek, Spyglass to the Hill of Life. Rocky limestone footing, rolling terrain, and the Hill of Life climb at the west end. String entrances together for 6–10 mile days.</div>
+      <div class="hike-why">Rocky footing is the real WHW simulation — uneven limestone is what finds your ankles before Scotland does.</div>
+      <div><span class="hike-tag distance">Long Distance</span><span class="hike-tag terrain">Rocky Terrain</span></div>
+    </div>
+
+    <div class="hike-card tier2">
+      <div class="hike-name">Walnut Creek Metro Park</div>
+      <div class="hike-meta"><span>N Austin</span><span>~15 mi (loops)</span><span>Rolling hills</span><span>Free</span></div>
+      <div class="hike-desc">Shaded interconnecting loops that make distance-stacking easy — no driving, just lap up. Shared with mountain bikers; expect company and watch the blind corners.</div>
+      <div class="hike-why">Built for back-to-back days: walk it Saturday, come back Sunday morning and do it again.</div>
+      <div><span class="hike-tag distance">Long Distance</span></div>
+    </div>
+
+    <div class="hike-card tier3">
+      <div class="hike-name">Lady Bird Lake Butler Trail <span class="tier-badge distance">Endurance</span></div>
+      <div class="hike-meta"><span>Downtown</span><span>10.1 mi loop</span><span>Flat</span><span>Free</span></div>
+      <div class="hike-desc">The full boardwalk-and-bridge loop around Lady Bird Lake. Flat, smooth, and impossible to get lost on.</div>
+      <div class="hike-why">Flat is fine — load the pack to 15–20 lbs, walk the whole 10-mile loop, and let your boots and shoulders learn their lessons before Scotland teaches them the hard way.</div>
+      <div><span class="hike-tag distance">Long Distance</span></div>
+    </div>
+    </div><!-- end data-region atx -->
+
     <div data-region="nb">
     <div class="region-header">🤠 New Braunfels</div>
     <div class="region-sub">The Hill Country is flat around NB — expect some driving to find real elevation</div>
@@ -1359,7 +1396,7 @@ function goToTips() {
 }
 
 // ── Training region sort ─────────────────────────────────────────────────────
-const HIKER_REGION = { Sharky: 'sa', Paco: 'la', Madness: 'sa' }; // Brack (Austin) — no region yet
+const HIKER_REGION = { Sharky: 'sa', Paco: 'la', Brack: 'atx', Madness: 'sa' };
 
 function sortTrainingRegions() {
   const container = document.getElementById('training');
