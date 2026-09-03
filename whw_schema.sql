@@ -8,7 +8,7 @@ drop table if exists public.day_notes cascade;
 -- ── Relational checklist state ────────────────────────────────────────────────
 
 create table public.checklist_state (
-  hiker      text        not null check (hiker in ('Sharky', 'Paco', 'Mango', 'Madness')),
+  hiker      text        not null check (hiker in ('Sharky', 'Paco', 'Brack', 'Madness')),
   phase_idx  int         not null,
   task_idx   int         not null,
   state      smallint    not null default 0 check (state in (0, 1, 2)),

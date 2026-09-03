@@ -28,11 +28,21 @@ The four hiker names appear in **five places** and must be identical in all of t
 4. The `SHARKY · PACO · ...` subtitle in the page header
 5. The `<title>` tag
 
-Current names: `Sharky`, `Paco`, `Mango`, `Madness`
+Current names: `Sharky`, `Paco`, `Brack`, `Madness` (Brack replaced Mango 2026-09-03)
 
 **Renaming a hiker is a data migration, not a find-and-replace.** Existing `checklist_state` rows are keyed by the hiker name string. If you rename a hiker in the JS without updating Supabase, their checklist data becomes orphaned. To rename safely:
 1. Update the Supabase rows first: `UPDATE checklist_state SET hiker = 'NewName' WHERE hiker = 'OldName';`
 2. Then update all five locations in `index.html`.
+
+The `hiker` CHECK constraint in the **live** database must also be altered (Supabase SQL editor — the anon key cannot run DDL):
+
+```sql
+alter table public.checklist_state drop constraint checklist_state_hiker_check;
+alter table public.checklist_state add constraint checklist_state_hiker_check
+  check (hiker in ('Sharky', 'Paco', 'Brack', 'Madness'));
+```
+
+For a person **swap** (Mango → Brack, 2026-09-03), don't migrate the outgoing hiker's `checklist_state` rows to the new name — DELETE them so the new person starts clean.
 
 ### Day indices (`day_idx`)
 
@@ -54,6 +64,8 @@ Current names: `Sharky`, `Paco`, `Mango`, `Madness`
 ### Checklist phase and task indices
 
 `checklist_state` rows use `phase_idx` and `task_idx` into the `PHASES` array. Adding new tasks or phases at the **end** of a phase/array is safe. Inserting, removing, or reordering tasks or phases will corrupt existing checklist state — old ticks will land on the wrong tasks.
+
+**2026-09-03 incident:** the UK ETA task was inserted at phase 0 / index 2, shifting every later phase-0 task by one, so stored ticks displayed on the wrong items. Fix was a one-time data migration via Supabase REST: rows written pre-insertion in the affected phase had `task_idx` shifted +1 (stale duplicates from post-insertion re-checks deleted first). Any mid-phase insertion requires exactly this migration. Recommended refactor: key tasks by stable string IDs instead of array positions.
 
 ---
 
