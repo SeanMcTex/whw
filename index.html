@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WHW 2026 — Sharky, Paco, Brack & Madness</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#0f4c54">
+<link rel="apple-touch-icon" href="/icon-192.png">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root {
@@ -1091,9 +1094,22 @@ async function loadAllStates() {
       allStates[r.hiker][r.phase_idx][r.task_idx] = r.state;
     });
     setSyncDot('ok');
+    try { localStorage.setItem('whw_snapshot_states', JSON.stringify(data || [])); } catch (_) {}
   } catch (e) {
-    console.warn('Supabase load failed:', e);
+    console.warn('Supabase load failed (offline?) — trying snapshot:', e);
+    let restored = false;
+    try {
+      const rows = JSON.parse(localStorage.getItem('whw_snapshot_states') || '[]');
+      allStates = {};
+      rows.forEach(r => {
+        if (!allStates[r.hiker])              allStates[r.hiker]              = {};
+        if (!allStates[r.hiker][r.phase_idx]) allStates[r.hiker][r.phase_idx] = {};
+        allStates[r.hiker][r.phase_idx][r.task_idx] = r.state;
+      });
+      restored = rows.length > 0;
+    } catch (_) {}
     setSyncDot('err');
+    if (restored) showOfflineBanner('Showing last synced checklist data');
   }
 }
 
@@ -1129,7 +1145,16 @@ async function loadNotes() {
     notesData = {};
     (data || []).forEach(r => { notesData[r.day_idx] = r; });
     renderNotes();
-  } catch (e) { console.warn('Notes load failed:', e); }
+    try { localStorage.setItem('whw_snapshot_notes', JSON.stringify(data || [])); } catch (_) {}
+  } catch (e) {
+    console.warn('Notes load failed (offline?) — trying snapshot:', e);
+    try {
+      const rows = JSON.parse(localStorage.getItem('whw_snapshot_notes') || '[]');
+      notesData = {};
+      rows.forEach(r => { notesData[r.day_idx] = r; });
+      if (rows.length) { renderNotes(); showOfflineBanner('Showing last synced day notes'); }
+    } catch (_) {}
+  }
 }
 
 function renderNotes() {
@@ -1547,6 +1572,30 @@ const PHASES = [
     'Power bank charged and in carry-on',
   ]},
 ];
+
+// ── Offline (PWA) ─────────────────────────────────────────────────────────────
+function showOfflineBanner(msg) {
+  let b = document.getElementById('offline-banner');
+  if (!b) {
+    b = document.createElement('div');
+    b.id = 'offline-banner';
+    b.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:#7a4a00;color:#fff;font-size:13px;padding:7px 12px;text-align:center;font-family:DM Sans,sans-serif;';
+    document.body.appendChild(b);
+  }
+  b.textContent = `⚠ Offline — ${msg}. Edits won't save until back online.`;
+  b.style.display = 'block';
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+
+window.addEventListener('online', () => {
+  const b = document.getElementById('offline-banner');
+  if (b) b.style.display = 'none';
+  loadAllStates();
+  loadNotes();
+});
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 (async function init() {
